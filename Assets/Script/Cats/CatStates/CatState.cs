@@ -44,6 +44,8 @@ public class CatState {
 	public virtual void ToGoTowardsFood() {
 		cat.hideBubble ();
 		cat.currState = cat.goTowardsFoodState;
+		CatGoTowardsFoodState gtfs = (CatGoTowardsFoodState)cat.currState;
+		gtfs.updateAnim ();
 	}
 
 	public virtual void ToEating() {
@@ -56,6 +58,8 @@ public class CatState {
 		cat.currState = cat.leavingState;
 		cat.animator.SetInteger ("animNo", 2);
 		cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
+		CatLeavingState ls = (CatLeavingState)cat.currState;
+		ls.updateAnim ();
 	}
 
 	public virtual void ToEscaping() {
@@ -63,9 +67,11 @@ public class CatState {
 			GameManager.getGameManager ().catManager.decreaseCatPopularity (2);
 			cat.hideBubble ();
 			cat.currState = cat.escapingState;
+			CatEscapingState es = (CatEscapingState)cat.currState;
+			es.updateAnim ();
 			cat.gameManager.playMeowSFX (false);
 			cat.animator.SetInteger ("animNo", 2);
-			cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
+			//cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
 		}
 
 	}

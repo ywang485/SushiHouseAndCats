@@ -26,7 +26,7 @@ public class Moving : MonoBehaviour {
 
 		float movex = Input.GetAxis ("Horizontal");
 		float movey = Input.GetAxis ("Vertical");
-		rb.velocity = new Vector2 (movex * speed, movey * speed);
+		rb.velocity = Utilities.coordinateReverseTransform(new Vector2 (movex * speed, movey * speed));
 
 		transform.localRotation = Quaternion.identity;
 
@@ -34,19 +34,33 @@ public class Moving : MonoBehaviour {
 			animator.SetBool ("still", true);
 		} else {
 			animator.SetBool ("still", false);
+			// Moving right: right, back
 			if (movex > 0) {
 				if (!towardsRight) {
 					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
 					towardsRight = true;
 				}
-			} else if (movey > 0) {
 				animator.SetInteger ("direction", 1);
+			// Moving up: left, back
+			} else if (movey > 0) {
+				if (towardsRight) {
+					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
+					towardsRight = false;
+				}
+				animator.SetInteger ("direction", 1);
+			// Moving left: left, front
 			} else if (movex < 0) {
 				if (towardsRight) {
 					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
 					towardsRight = false;
 				}
+				animator.SetInteger ("direction", 0);
+			// Moving down: right, front
 			} else if (movey < 0) {
+				if (!towardsRight) {
+					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
+					towardsRight = true;
+				}
 				animator.SetInteger ("direction", 0);
 			}
 		}

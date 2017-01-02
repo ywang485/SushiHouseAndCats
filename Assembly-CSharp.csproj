@@ -99,6 +99,7 @@
      <Compile Include="Assets\Script\Sushi\Sushi.cs" />
      <Compile Include="Assets\Script\Table.cs" />
      <Compile Include="Assets\Script\TitleScreen.cs" />
+     <Compile Include="Assets\Script\Utilities.cs" />
      <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

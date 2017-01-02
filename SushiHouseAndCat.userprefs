@@ -1,18 +1,17 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Script/Cats/CatStates/CatLookingForFoodState.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Script/Cats/CatStates/CatEscapingState.cs">
     <Files>
       <File FileName="Assets/Script/GameManagers/GameManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Script/GameManagers/CatManager.cs" Line="19" Column="12" />
-      <File FileName="Assets/Script/Cats/CatStates/CatLeavingState.cs" Line="19" Column="3" />
-      <File FileName="Assets/Script/Cats/Cat.cs" Line="148" Column="1" />
-      <File FileName="Assets/Script/Cats/CatStates/CatState.cs" Line="62" Column="44" />
-      <File FileName="Assets/Script/Cats/CatStates/CatLookingForFoodState.cs" Line="53" Column="38" />
-      <File FileName="Assets/Script/Cats/CatStates/CatEscapingState.cs" Line="21" Column="38" />
-      <File FileName="Assets/Script/Moving.cs" Line="39" Column="121" />
-      <File FileName="Assets/Script/Cats/CatStates/CatGoTowardsFoodState.cs" Line="13" Column="77" />
-      <File FileName="Assets/Script/GameManagers/LevelManager.cs" Line="89" Column="10" />
-      <File FileName="Assets/Script/Cats/StarvedCat.cs" Line="7" Column="32" />
+      <File FileName="Assets/Script/Cats/CatStates/CatGoTowardsFoodState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/Utilities.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/Moving.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/Cats/Cat.cs" Line="28" Column="33" />
+      <File FileName="Assets/Script/Cats/CatStates/CatLookingForFoodState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/Cats/CatStates/CatState.cs" Line="75" Column="4" />
+      <File FileName="Assets/Script/Cats/CatStates/CatLeavingState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/Cats/CatStates/CatEscapingState.cs" Line="26" Column="5" />
+      <File FileName="Assets/Script/GameManagers/CatManager.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

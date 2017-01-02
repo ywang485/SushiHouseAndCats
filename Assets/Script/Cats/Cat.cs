@@ -25,6 +25,8 @@ public class Cat : MonoBehaviour {
 	[HideInInspector] public CatLeavingState leavingState;
 	[HideInInspector] public CatEscapingState escapingState;
 
+	public bool facingRight = false;
+
 	private GameObject targetSushiPlate;
 	private bool isPet;
 
@@ -165,6 +167,9 @@ public class Cat : MonoBehaviour {
 				gameObject.SetActive(false);
 			}
 		}
+
+		Debug.Log ("Cat facing right: ");
+		Debug.Log (facingRight);
 	}
 
 	void OnMouseOver() {

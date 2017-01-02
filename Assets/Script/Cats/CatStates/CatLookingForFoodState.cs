@@ -11,8 +11,6 @@ public class CatLookingForFoodState : CatState {
 
 	public float actualSpeed;
 
-	private bool facingRight = true;
-
 	public CatLookingForFoodState(Cat subjCat) : base(subjCat) {
 		gameManager = GameManager.getGameManager ();
 		wayPoints = gameManager.mapManager.catWanderingWayPoints;
@@ -46,24 +44,33 @@ public class CatLookingForFoodState : CatState {
 			if (cat.animator.GetInteger ("animNo") != 1) {
 				cat.animator.SetInteger ("animNo", 1);
 				actualSpeed = cat.speedScale (1);
+				if (cat.facingRight) {
+					cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
+					cat.facingRight = false;
+				}
 			}
 		} else if (nextWayPoint == 3) {
 			if (cat.animator.GetInteger ("animNo") != 5) {
 				cat.animator.SetInteger ("animNo", 5);
 				actualSpeed = cat.speedScale (2.0f);
-				cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
+				if (!cat.facingRight) {
+					cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
+					cat.facingRight = true;
+				}
 			}
 		} else if (nextWayPoint == 4) {
 			if (cat.animator.GetInteger ("animNo") != 2) {
 				cat.animator.SetInteger ("animNo", 2);
 				actualSpeed = cat.speedScale (1.0f);
-				//cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
-				facingRight = false;
+				if (!cat.facingRight) {
+					cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
+					cat.facingRight = true;
+				}
 			}
 		} else if (nextWayPoint == 0) {
-			if (!facingRight) {
+			if (!cat.facingRight) {
 				cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
-				facingRight = true;
+				cat.facingRight = true;
 			}
 		} 
 		if (other.CompareTag ("Sushi")) {
