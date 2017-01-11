@@ -18,11 +18,11 @@ public class Utilities {
 	}
 
 	public static Vector2 getDirection(Vector2 src, Vector2 dest) {
-		Vector2 diff = dest - src;
+		Vector2 diff = coordinateTransform(dest) - coordinateTransform(src);
 		if(Mathf.Abs(diff.x) > Mathf.Abs(diff.y)) {
-			return new Vector2(1, 0);
+			return new Vector2(diff.x, 0);
 		} else {
-			return new Vector2(0, 1);
+			return new Vector2(0, diff.y);
 		}
 	}
 }

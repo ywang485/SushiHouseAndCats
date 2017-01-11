@@ -16,6 +16,8 @@ public class PlayerData {
 	public int basicCatPettingPower;
 	public int itemCatPettingPower;
 
+	public float movingSpeed;
+
 	public ArrayList itemsOwned;
 
 	public bool catMoodIconEnabled;
@@ -33,5 +35,9 @@ public class PlayerData {
 	public int numWhiteFish;
 	public int numCucumber;
 	public int numAvocado;
+
+
+	// Weapon related
+	public float weaponSpeed;
 
 }

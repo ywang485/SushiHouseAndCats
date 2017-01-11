@@ -13,14 +13,14 @@ public class CatState {
 	}
 
 	public virtual void OnLeftClick() {
-		if (cat.hpsubj == null) {
-			if (PlayerDataManager.playerData.catMoodIconEnabled) {
-				cat.showMoodIcon (3);
-			}
-			ToEscaping ();
-		} else {
-			cat.hpsubj.beAttacked (GameManager.getGameManager().calculateDamage(0));
-		}
+//		if (cat.hpsubj == null) {
+//			if (PlayerDataManager.playerData.catMoodIconEnabled) {
+//				cat.showMoodIcon (3);
+//			}
+//			ToEscaping ();
+//		} else {
+//			cat.hpsubj.beAttacked (GameManager.getGameManager().calculateDamage(0));
+//		}
 	}
 
 	public virtual void OnRightClick() {
@@ -42,10 +42,10 @@ public class CatState {
 	}
 
 	public virtual void ToGoTowardsFood() {
+		cat.towardsFood = true;
 		cat.hideBubble ();
 		cat.currState = cat.goTowardsFoodState;
-		CatGoTowardsFoodState gtfs = (CatGoTowardsFoodState)cat.currState;
-		gtfs.updateAnim ();
+		cat.targetPosition = cat.getTargetSushiPlate ().gameObject.transform.position;
 	}
 
 	public virtual void ToEating() {
@@ -54,24 +54,19 @@ public class CatState {
 	}
 
 	public virtual void ToLeaving() {
-		GameManager.getGameManager ().catManager.increaseCatPopularity (1);
-		cat.currState = cat.leavingState;
-		cat.animator.SetInteger ("animNo", 2);
-		cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
-		CatLeavingState ls = (CatLeavingState)cat.currState;
-		ls.updateAnim ();
+			GameManager.getGameManager ().catManager.increaseCatPopularity (1);
+			cat.targetPosition = GameManager.getGameManager ().mapManager.getDoorLocation ();
+			cat.currState = cat.leavingState;
 	}
 
 	public virtual void ToEscaping() {
 		if (cat.currState != cat.escapingState) {
+			cat.towardsFood = false;
+			cat.targetPosition = GameManager.getGameManager ().mapManager.getDoorLocation ();
 			GameManager.getGameManager ().catManager.decreaseCatPopularity (2);
 			cat.hideBubble ();
 			cat.currState = cat.escapingState;
-			CatEscapingState es = (CatEscapingState)cat.currState;
-			es.updateAnim ();
 			cat.gameManager.playMeowSFX (false);
-			cat.animator.SetInteger ("animNo", 2);
-			//cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
 		}
 
 	}

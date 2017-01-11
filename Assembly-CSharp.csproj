@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Script\Bubble.cs" />
+     <Compile Include="Assets\Script\Buttons\CleanBtn.cs" />
      <Compile Include="Assets\Script\Buttons\DiscardBtn.cs" />
      <Compile Include="Assets\Script\Buttons\EnterCatStore.cs" />
      <Compile Include="Assets\Script\Buttons\GenericButton.cs" />
@@ -64,6 +65,7 @@
      <Compile Include="Assets\Script\Cats\CatStates\CatState.cs" />
      <Compile Include="Assets\Script\Cats\FastCat.cs" />
      <Compile Include="Assets\Script\Cats\StarvedCat.cs" />
+     <Compile Include="Assets\Script\Food\Food.cs" />
      <Compile Include="Assets\Script\GalGameMode.cs" />
      <Compile Include="Assets\Script\GameManagers\CatManager.cs" />
      <Compile Include="Assets\Script\GameManagers\GameManager.cs" />
@@ -73,6 +75,7 @@
      <Compile Include="Assets\Script\GameManagers\MapManager.cs" />
      <Compile Include="Assets\Script\GameManagers\PlayerDataManager.cs" />
      <Compile Include="Assets\Script\GameManagers\SushiManager.cs" />
+     <Compile Include="Assets\Script\GameManagers\WeaponManager.cs" />
      <Compile Include="Assets\Script\Guests\DefaultGuest.cs" />
      <Compile Include="Assets\Script\Guests\Guest.cs" />
      <Compile Include="Assets\Script\Guests\GuestStates\GuestEatingState.cs" />
@@ -91,6 +94,7 @@
      <Compile Include="Assets\Script\InteractiveObjects\BuyIngredient.cs" />
      <Compile Include="Assets\Script\InteractiveObjects\BuyRice.cs" />
      <Compile Include="Assets\Script\InteractiveObjects\BuyTunaFish.cs" />
+     <Compile Include="Assets\Script\InteractiveObjects\CleanTrash.cs" />
      <Compile Include="Assets\Script\InteractiveObjects\GenericInteractiveObject.cs" />
      <Compile Include="Assets\Script\InteractiveObjects\MakeSushi.cs" />
      <Compile Include="Assets\Script\InteractiveObjects\ShowSushiPlateMenu.cs" />
@@ -100,6 +104,11 @@
      <Compile Include="Assets\Script\Table.cs" />
      <Compile Include="Assets\Script\TitleScreen.cs" />
      <Compile Include="Assets\Script\Utilities.cs" />
+     <Compile Include="Assets\Script\Weapons\BasicWeapon.cs" />
+     <Compile Include="Assets\Script\Weapons\CatFoodCan.cs" />
+     <Compile Include="Assets\Script\Weapons\FishTreats.cs" />
+     <Compile Include="Assets\Script\Weapons\Tomato.cs" />
+     <Compile Include="Assets\Script\Weapons\WeaponStoreManagement.cs" />
      <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

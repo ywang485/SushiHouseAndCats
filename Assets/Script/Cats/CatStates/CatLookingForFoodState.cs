@@ -27,10 +27,9 @@ public class CatLookingForFoodState : CatState {
 		if (gameManager.getCurrTimeInMinute () - searchingStartTime > cat.getSearchingTime()) {
 			ToLeaving ();
 		}
-
-		Vector2 targetLocation = wayPoints [nextWayPoint].position;
+			
 		Vector2 currPos = new Vector2 (cat.transform.position.x, cat.transform.position.y);
-		cat.transform.position = Vector2.MoveTowards(currPos, targetLocation, actualSpeed * Time.deltaTime);
+		cat.transform.position = Vector2.MoveTowards(currPos, cat.targetPosition, actualSpeed * Time.deltaTime);
 
 	}
 
@@ -40,46 +39,41 @@ public class CatLookingForFoodState : CatState {
 			nextWayPoint = (nextWayPoint + 1) % wayPoints.Length;
 		}
 
-		if (nextWayPoint == 2) {
-			if (cat.animator.GetInteger ("animNo") != 1) {
-				cat.animator.SetInteger ("animNo", 1);
-				actualSpeed = cat.speedScale (1);
-				if (cat.facingRight) {
-					cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
-					cat.facingRight = false;
-				}
-			}
+		cat.targetPosition = wayPoints [nextWayPoint].position;
+		if (nextWayPoint == 1) {
+			//cat.towardsFloor = true;
+		}
+		else if (nextWayPoint == 2) {
+			actualSpeed = cat.speedScale (1);
+			cat.towardsFloor = false;
 		} else if (nextWayPoint == 3) {
-			if (cat.animator.GetInteger ("animNo") != 5) {
-				cat.animator.SetInteger ("animNo", 5);
-				actualSpeed = cat.speedScale (2.0f);
-				if (!cat.facingRight) {
-					cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
-					cat.facingRight = true;
-				}
-			}
+			cat.towardsFloor = true;
+			actualSpeed = cat.speedScale (2.0f);
 		} else if (nextWayPoint == 4) {
-			if (cat.animator.GetInteger ("animNo") != 2) {
-				cat.animator.SetInteger ("animNo", 2);
-				actualSpeed = cat.speedScale (1.0f);
-				if (!cat.facingRight) {
-					cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
-					cat.facingRight = true;
-				}
-			}
+			cat.towardsFloor = false;
+			actualSpeed = cat.speedScale (1.0f);
 		} else if (nextWayPoint == 0) {
-			if (!cat.facingRight) {
-				cat.transform.localScale = new Vector3 (cat.transform.localScale.x * (-1), cat.transform.localScale.y, cat.transform.localScale.z);
-				cat.facingRight = true;
-			}
 		} 
 		if (other.CompareTag ("Sushi")) {
 			Sushi sushi = other.GetComponent<Sushi> ();
 			if (cat.isWantedSushi (sushi.getSushiType ())) {
-				cat.setTargetSushiPlate(sushi.gameObject);
+				cat.setTargetSushiPlate (sushi.gameObject);
 				ToGoTowardsFood ();
 			}
+		} else if (other.CompareTag ("Food")) {
+			if (!((Food)other.gameObject.GetComponent<Food> ()).finished && ((Food)other.gameObject.GetComponent<Food> ()).active) {
+				cat.setTargetSushiPlate (other.gameObject);
+				ToGoTowardsFood ();
+			}
+			
+		} else if(other.CompareTag ("Treats"))  {
+			GameObject.Destroy (other.gameObject);
+			GameManager.getGameManager ().catManager.increaseCatPopularity (1);
+			//if (PlayerDataManager.playerData.catMoodIconEnabled) {
+				cat.showMoodIcon (2);
+			//}
 		}
+
 	}
 
 }

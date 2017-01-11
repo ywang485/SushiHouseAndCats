@@ -29,6 +29,9 @@ public class Cat : MonoBehaviour {
 
 	private GameObject targetSushiPlate;
 	private bool isPet;
+	public Vector2 targetPosition;
+	public bool towardsFloor = false;
+	public bool towardsFood = false;
 
 	public CatState currState;
 
@@ -160,6 +163,71 @@ public class Cat : MonoBehaviour {
 
 	}
 
+	public void updateAnim() {
+		Vector2 drct = Utilities.getDirection (new Vector2 (transform.position.x, transform.position.y), targetPosition);
+		float movex = drct.x;
+		float movey = drct.y;
+		if (movex == 0 && movey == 0) {
+			animator.SetInteger ("animNo", 3);
+		} else {
+			// Moving right: right, back
+			if (movex > 0) {
+				if (!facingRight) {
+					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
+					facingRight = true;
+				}
+				if (towardsFood) {
+					animator.SetInteger ("animNo", 5);
+				} else if (towardsFloor) {
+					animator.SetInteger ("animNo", 5);
+				} else {
+					animator.SetInteger ("animNo", 2);
+				}
+				// Moving up: left, back
+			} else if (movey > 0) {
+				if (facingRight) {
+					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
+					facingRight = false;
+				}
+				if (towardsFood) {
+					animator.SetInteger ("animNo", 5);
+				} else if (towardsFloor) {
+					animator.SetInteger ("animNo", 5);
+				} else {
+					animator.SetInteger ("animNo", 2);
+				}
+				// Moving left: left, front
+			} else if (movex < 0) {
+				if (facingRight) {
+					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
+					facingRight = false;
+				}
+				if (towardsFood) {
+					animator.SetInteger ("animNo", 4);
+				} else if (towardsFloor) {
+					animator.SetInteger ("animNo", 4);
+				} else {
+					animator.SetInteger ("animNo", 1);
+				}
+				// Moving down: right, front
+			} else if (movey < 0) {
+				if (!facingRight) {
+					transform.localScale = new Vector3 (transform.localScale.x * (-1), transform.localScale.y, transform.localScale.z);
+					facingRight = true;
+				}
+				if (towardsFood) {
+					animator.SetInteger ("animNo", 4);
+				} else if (towardsFloor) {
+					animator.SetInteger ("animNo", 4);
+				} else {
+					animator.SetInteger ("animNo", 1);
+				}
+			}
+		}
+			
+	}
+
+
 	void Update() {
 		currState.UpdateState ();
 		if (hpsubj != null) {
@@ -167,9 +235,7 @@ public class Cat : MonoBehaviour {
 				gameObject.SetActive(false);
 			}
 		}
-
-		Debug.Log ("Cat facing right: ");
-		Debug.Log (facingRight);
+		updateAnim();
 	}
 
 	void OnMouseOver() {
@@ -184,6 +250,17 @@ public class Cat : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
+		if (other.tag == "Weapon") {
+			GameObject.Destroy(other.gameObject);
+			if (hpsubj == null) {
+				if (PlayerDataManager.playerData.catMoodIconEnabled) {
+					showMoodIcon (3);
+				}
+				currState.ToEscaping ();
+			} else {
+				hpsubj.beAttacked (GameManager.getGameManager ().calculateDamage (0));
+			}
+		}
 		currState.OnTriggerEnter2D (other);
 	}
 

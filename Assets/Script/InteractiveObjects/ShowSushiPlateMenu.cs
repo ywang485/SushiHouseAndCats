@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ShowSushiPlateMenu : GenericInteractiveObject {
 
-	public DiscardBtn DiscardBtn;
+	public GameObject DiscardBtn;
 
 	// Use this for initialization
 	void Awake () {
@@ -14,10 +14,10 @@ public class ShowSushiPlateMenu : GenericInteractiveObject {
 	
 	void showSushiPlateMenu() {
 		base.gameManager.closeAllUI ();
-		DiscardBtn.gameObject.SetActive (true);
+		DiscardBtn.SetActive (true);
 	}
 
 	void hideSushiPlateMenu() {
-		DiscardBtn.gameObject.SetActive (false);
+		DiscardBtn.SetActive (false);
 	}
 }

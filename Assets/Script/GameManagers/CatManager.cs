@@ -15,18 +15,11 @@ public class CatManager : MonoBehaviour {
 
 	public GameObject[] catList;
 
-
-	// Test
-	public bool spawned = false;
-
 	int getSpawningLikelihood() {
-		return 10 + (int)(30 * (float)gameManager.getSushiPlateCount() / 6.0f);
+		return 5 + (int)(3.5f * (float)gameManager.getSushiPlateCount());
 	}
 
 	void spawning(int totalMinute) {
-		if (spawned) {
-			return;
-		}
 		if (totalMinute % spawningInterval == 0) {
 			if (prevTime != totalMinute) {
 				// Construct active cat list
@@ -44,7 +37,6 @@ public class CatManager : MonoBehaviour {
 					GameObject catsNode = GameObject.Find ("Cats");
 					GameObject catObj = (GameObject)GameObject.Instantiate (actCatList[r2], gameManager.mapManager.findCatSpawningLoc (), Quaternion.identity);
 					catObj.transform.SetParent (catsNode.transform);
-					spawned = true;
 				}
 			}
 //			if (cat.gameObject.activeInHierarchy) {

@@ -10,9 +10,12 @@ public class Moving : MonoBehaviour {
 	private Rigidbody2D rb;
 	private bool towardsRight = true;
 
+	private GameManager gameManager;
+
 	// Use this for initialization
 	void Start () {
 	
+		gameManager = GameManager.getGameManager ();
 		rb = gameObject.GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
 
@@ -20,15 +23,19 @@ public class Moving : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+
 		rb.velocity = Vector2.zero;
 		rb.angularVelocity = 0f;
 
 		float movex = Input.GetAxis ("Horizontal");
 		float movey = Input.GetAxis ("Vertical");
-		rb.velocity = Utilities.coordinateReverseTransform(new Vector2 (movex * speed, movey * speed));
-
+		rb.velocity = Utilities.coordinateReverseTransform(new Vector2 (movex * speed * (gameManager.movingSpeed + 1), movey * speed * (gameManager.movingSpeed + 1) ));
+		//rb.velocity = new Vector2 (movex * speed, movey * speed);
 		transform.localRotation = Quaternion.identity;
+
+		// Test
+		// Debug.Log(new Vector2(movex, movey));
+		// Debug.Log(rb.velocity);
 
 		if (movex == 0 && movey == 0) {
 			animator.SetBool ("still", true);

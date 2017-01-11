@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour {
 	public int weaponAttack = 0;
 	public int basicCatPettingPower = 1;
 	public int itemCatPettingPower = 0;
+	public float weaponSpeed = 15f;
+	public float movingSpeed = 0;
 
 	public MapManager mapManager;
 
@@ -51,6 +53,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject gamePausedIndicator;
 	public GameObject systemMenu;
 	public GameObject weaponStore;
+	public GameObject storeUpgradePanel;
 	public GameObject catSupplyStore;
 	public GameObject catGalGameModePanel;
 
@@ -97,6 +100,10 @@ public class GameManager : MonoBehaviour {
 
 	public int getSushiPlateCount() {
 		return GameObject.FindGameObjectsWithTag ("Sushi").Length;
+	}
+
+	public int getGuestCount() {
+		return GameObject.FindGameObjectsWithTag ("Guest").Length;
 	}
 
 	public void playMeowSFX(bool happy) {
@@ -153,11 +160,22 @@ public class GameManager : MonoBehaviour {
 
 				basicAttack = data.basicAttack;
 				weaponAttack = data.weaponAttack;
+				weaponSpeed = data.weaponSpeed;
 
 				basicCatPettingPower = data.basicCatPettingPower;
 				itemCatPettingPower = data.itemCatPettingPower;
+
+				movingSpeed = data.movingSpeed;
 			}
 		}
+	}
+
+	public int getNumFood() {
+		return GameObject.FindGameObjectsWithTag ("Food").Length;
+	}
+
+	public int getNumCat() {
+		return GameObject.FindGameObjectsWithTag ("Cat").Length;
 	}
 
 	public int calculateDamage(int defense) {
@@ -293,11 +311,13 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void enterWeaponStore() {
+		storeUpgradePanel.SetActive (true);
 		weaponStore.SetActive (true);
 	}
 
 	public void closeWeaponStore() {
 		weaponStore.SetActive (false);
+		storeUpgradePanel.SetActive (false);
 	}
 
 	public void enterCatSupplyStore() {
@@ -350,6 +370,7 @@ public class GameManager : MonoBehaviour {
 
 	void endTodayAndStartNewDay () {
 		Time.timeScale = 0;
+		clockPaused = true;
 		netProfit = numGold - initNumGold;
 		endOfDayDisplay.SetActive (true);
 		endOfDayMessage.text = "Good Job!\n" + 
@@ -389,9 +410,9 @@ public class GameManager : MonoBehaviour {
 
 
 		// Remove Guests, Cats, and sushi on counter
-		foreach (Guest guest in guestManager.guestList) {
-			guest.gameObject.SetActive (false);
-		}
+//		foreach (Guest guest in guestManager.guestList) {
+//			guest.gameObject.SetActive (false);
+//		}
 			
 //		foreach (Cat cat in catManager.catList) {
 //			cat.gameObject.SetActive (false);
@@ -412,6 +433,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void startNewDay() {
+		clockPaused = false;
 		endOfDayDisplay.SetActive (false);
 		Time.timeScale = 1.0f;
 
@@ -458,6 +480,9 @@ public class GameManager : MonoBehaviour {
 
 		data.basicCatPettingPower = basicCatPettingPower;
 		data.itemCatPettingPower = itemCatPettingPower;
+		data.weaponSpeed = weaponSpeed;
+
+		data.movingSpeed = movingSpeed;
 
 		bf.Serialize (file, data);
 		file.Close ();

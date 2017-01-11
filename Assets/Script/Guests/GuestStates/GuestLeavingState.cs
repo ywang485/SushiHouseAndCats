@@ -17,7 +17,7 @@ public class GuestLeavingState : GuestState {
 	public override void OnTriggerEnter2D(Collider2D other) {
 
 		if (other.CompareTag ("DoorLoc")) {
-			guest.gameObject.SetActive (false);
+			GameObject.Destroy(guest.gameObject);
 		}
 	}
 

@@ -19,7 +19,7 @@ public class GuestWaitState : GuestState {
 
 		if (guest.gameManager.getCurrTimeInMinute () - waitingStartTime > guest.getWaitTime()) {
 			guest.showMoodIcon (1);
-			gameManager.guestManager.humanPopularity -= guest.getPopValueDec ();
+			gameManager.guestManager.humanPopularity -= guest.getPopValueDec () / 2;
 			gameManager.playHurtSFX ();
 			ToLeaving ();
 		}

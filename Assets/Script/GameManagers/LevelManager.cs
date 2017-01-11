@@ -76,8 +76,8 @@ public class LevelManager : MonoBehaviour {
 			IntervalGuest guestObj = salmonEatingGuest.GetComponent<IntervalGuest> ();
 			guestObj.sushi2order = new SushiManager.Sushi[1];
 			guestObj.sushi2order [0] = SushiManager.Sushi.SalmonNigiri;
-			Guest[] originalGuestList = gameManager.guestManager.guestList;
-			gameManager.guestManager.guestList = addObj2List<Guest> (originalGuestList, salmonEatingGuest.GetComponent<Guest>());
+//			Guest[] originalGuestList = gameManager.guestManager.guestList;
+//			gameManager.guestManager.guestList = addObj2List<Guest> (originalGuestList, salmonEatingGuest.GetComponent<Guest>());
 			GameObject guestsNode = GameObject.Find ("Guests");
 			if (guestsNode != null) {
 				salmonEatingGuest.transform.SetParent (guestsNode.transform);

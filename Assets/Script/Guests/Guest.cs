@@ -13,11 +13,13 @@ public class Guest : MonoBehaviour {
 
 	[HideInInspector] public GuestState currState;
 
-	private static int spawingInterval = 5;
-	private static int spawningLikelihood = 50;
+	//private static int spawingInterval = 5;
+	//private static int spawningLikelihood = 50;
+	private static int defActPopThUp = 999;
+	private static int defActPopThDown = -999;
 	private static int waitTime = 20;
 	private static int eatingTime = 40;
-	private static int popValue = 2;
+	private static int popValue = 5;
 	private static float speed = 1f;
 	private static int popValueDec = 5;
 
@@ -30,16 +32,21 @@ public class Guest : MonoBehaviour {
 	[HideInInspector] public GuestWaitState waitState;
 	[HideInInspector] public GuestLeavingState leavingState;
 
-	public virtual int getSpawningInterval() {
-		return Guest.spawingInterval;
-	}
-
-	public virtual int getSpawningLikelihood() {
-		return Guest.spawningLikelihood;
-	}
+//	public virtual int getSpawningInterval() {
+//		return Guest.spawingInterval;
+//	}
+//
+//	public virtual int getSpawningLikelihood() {
+//		return Guest.spawningLikelihood;
+//	}
 
 	public virtual int getWaitTime() {
-		return Guest.waitTime;
+		int waitTime = Guest.waitTime + gameManager.guestManager.humanPopularity / 15;
+		if (waitTime < gameManager.guestManager.minimalWaitTime) {
+			return gameManager.guestManager.minimalWaitTime;
+		} else {
+			return waitTime;
+		}
 	}
 
 	public virtual int getEatingTime() {
@@ -58,13 +65,21 @@ public class Guest : MonoBehaviour {
 		return Guest.speed;
 	}
 
-	public virtual bool shouldSpawn(int totalMinute) {
-		if(totalMinute % getSpawningInterval() == 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
+//	public virtual bool shouldSpawn(int totalMinute) {
+//		if(totalMinute % getSpawningInterval() == 0) {
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
+
+	public virtual int getActPopThUp() {
+		return defActPopThUp;
+	}
+
+	public virtual int getActPopThDown() {
+		return defActPopThDown;
 	}
 
 	public virtual SushiManager.Sushi[] getSushiWanted() {
@@ -120,6 +135,13 @@ public class Guest : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
+		if (other.tag == "Weapon") {
+			GameObject.Destroy(other.gameObject);
+			showMoodIcon (1);
+			gameManager.guestManager.humanPopularity -= getPopValueDec ();
+			currState.ToLeaving ();
+			gameManager.playHurtSFX ();
+		}
 		currState.OnTriggerEnter2D (other);
 	}
 
