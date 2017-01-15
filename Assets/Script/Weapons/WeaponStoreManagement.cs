@@ -12,6 +12,9 @@ public class WeaponStoreManagement : MonoBehaviour {
 	public Text movingSpeedUpgradeText;
 	public int movingSpeedUpgradeCost;
 
+	public Button catFoodUpgradeBtn;
+	public Button catTreatsUpgradeBtn;
+
 
 	// Use this for initialization
 	void Awake () {
@@ -37,6 +40,18 @@ public class WeaponStoreManagement : MonoBehaviour {
 		} else {
 			movingSpeedUpgradeBtn.interactable = false;
 		}
+
+		if (gameManager.catManager.catPopularity > 50 && !gameManager.weaponManager.weaponStatus [2] && gameManager.numGold >= 100) {
+			catFoodUpgradeBtn.interactable = true;
+		} else {
+			catFoodUpgradeBtn.interactable = false;
+		}
+
+		if (gameManager.catManager.catPopularity > 20 && !gameManager.weaponManager.weaponStatus [1] && gameManager.numGold >= 50) {
+			catTreatsUpgradeBtn.interactable = true;
+		} else {
+			catTreatsUpgradeBtn.interactable = false;
+		}
 			
 	}
 
@@ -50,5 +65,17 @@ public class WeaponStoreManagement : MonoBehaviour {
 		gameManager.movingSpeed += 0.2f;
 		gameManager.numGold -= movingSpeedUpgradeCost;
 		Debug.Log ("Current speed: " + gameManager.movingSpeed);
+	}
+
+	public void catFoodUpgrade() {
+		gameManager.numGold -= 100;
+		gameManager.weaponManager.weaponStatus [2] = true;
+		Debug.Log ("Cat food obtained.");
+	}
+
+	public void catTreatsUpgrade() {
+		gameManager.numGold -= 50;
+		gameManager.weaponManager.weaponStatus [1] = true;
+		Debug.Log ("Cat treats obtained.");
 	}
 }

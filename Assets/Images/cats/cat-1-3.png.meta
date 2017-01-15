@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 2d68f4c0fe9c648c883c05ee666d9a79
-timeCreated: 1482431340
+timeCreated: 1484424679
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -63,7 +63,7 @@ TextureImporter:
         width: 19
         height: 14
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
     - name: cat-1-3_1

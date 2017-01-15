@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour {
 	[HideInInspector] public GuestManager guestManager;
 	[HideInInspector] public PlayerDataManager playerDataManager;
 	[HideInInspector] public LevelManager levelManager;
+	[HideInInspector] public WeaponManager weaponManager;
 
 	public const int maxPopularity = 100;
 
@@ -128,6 +129,7 @@ public class GameManager : MonoBehaviour {
 		catManager = gameObject.GetComponentInChildren<CatManager> ();
 		guestManager = gameObject.GetComponentInChildren<GuestManager> ();
 		levelManager = gameObject.GetComponentInChildren<LevelManager> ();
+		weaponManager = gameObject.GetComponentInChildren<WeaponManager> ();
 
 		GameObject playerDataManagerObj = GameObject.Find ("PlayerDataManager");
 
@@ -166,6 +168,8 @@ public class GameManager : MonoBehaviour {
 				itemCatPettingPower = data.itemCatPettingPower;
 
 				movingSpeed = data.movingSpeed;
+
+				weaponManager.weaponStatus = (bool[]) data.weaponStatus.Clone();
 			}
 		}
 	}
@@ -483,6 +487,8 @@ public class GameManager : MonoBehaviour {
 		data.weaponSpeed = weaponSpeed;
 
 		data.movingSpeed = movingSpeed;
+
+		data.weaponStatus = (bool[]) weaponManager.weaponStatus.Clone();
 
 		bf.Serialize (file, data);
 		file.Close ();

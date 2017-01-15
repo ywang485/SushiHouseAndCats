@@ -39,5 +39,6 @@ public class PlayerData {
 
 	// Weapon related
 	public float weaponSpeed;
+	public bool[] weaponStatus;
 
 }
