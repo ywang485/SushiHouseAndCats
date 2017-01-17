@@ -11,14 +11,13 @@ public class PlayerData {
 	public string playerName;
 
 	public int basicAttack;
-	public int weaponAttack;
 
 	public int basicCatPettingPower;
 	public int itemCatPettingPower;
 
 	public float movingSpeed;
 
-	public ArrayList itemsOwned;
+	//public ArrayList itemsOwned;
 
 	public bool catMoodIconEnabled;
 	public bool catPettingEnabled;

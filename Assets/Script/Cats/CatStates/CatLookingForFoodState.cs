@@ -66,12 +66,18 @@ public class CatLookingForFoodState : CatState {
 				ToGoTowardsFood ();
 			}
 			
-		} else if(other.CompareTag ("Treats"))  {
+		} else if (other.CompareTag ("Treats")) {
 			GameObject.Destroy (other.gameObject);
 			GameManager.getGameManager ().catManager.increaseCatPopularity (1);
 			//if (PlayerDataManager.playerData.catMoodIconEnabled) {
-				cat.showMoodIcon (2);
+			cat.showMoodIcon (2);
 			//}
+		} else if (other.CompareTag ("Toy")) {
+			if (!cat.played && ((Food)other.gameObject.GetComponent<Food> ()).active) {
+				cat.showMoodIcon (2);
+				cat.setTargetSushiPlate (other.gameObject);
+				ToGoTowardsFood ();
+			}
 		}
 
 	}

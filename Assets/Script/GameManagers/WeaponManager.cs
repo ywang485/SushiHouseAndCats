@@ -12,6 +12,7 @@ public class WeaponManager : MonoBehaviour {
 	public GameObject[] weaponList;
 	public bool[] weaponStatus;
 	public int[] weaponCost;
+	public int[] weaponAttack;
 
 	// UI Element
 	public Image weaponIndicator;

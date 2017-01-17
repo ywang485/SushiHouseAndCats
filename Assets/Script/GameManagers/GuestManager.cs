@@ -38,7 +38,7 @@ public class GuestManager : MonoBehaviour {
 						actGuestList.Add (obj);
 					}
 				}
-				Debug.Log ("Guest Spawning Function Entered");
+				//Debug.Log ("Guest Spawning Function Entered");
 				prevTime = totalMinute;
 				int r = Random.Range (0, 100);
 				if (r <= getSpawningLikelihood()) {

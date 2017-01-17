@@ -16,6 +16,11 @@ public class CatGoTowardsFoodState : CatState {
 	public override void OnTriggerEnter2D(Collider2D other) {
 
 		if (other.CompareTag ("ReachDetection")) {
+			if (other.transform.parent.CompareTag ("Toy")) {
+				Debug.Log("Play State Entered");
+				ToPlay ();
+				return;
+			}
 			ToEating ();
 		}
 	}

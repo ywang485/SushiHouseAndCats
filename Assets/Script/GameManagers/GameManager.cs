@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour {
 	// Gameplay data
 	public int numGold;
 	public int basicAttack = 3;
-	public int weaponAttack = 0;
 	public int basicCatPettingPower = 1;
 	public int itemCatPettingPower = 0;
 	public float weaponSpeed = 15f;
@@ -161,7 +160,6 @@ public class GameManager : MonoBehaviour {
 				ingredientManager.numWhiteFish = data.numWhiteFish;
 
 				basicAttack = data.basicAttack;
-				weaponAttack = data.weaponAttack;
 				weaponSpeed = data.weaponSpeed;
 
 				basicCatPettingPower = data.basicCatPettingPower;
@@ -183,7 +181,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public int calculateDamage(int defense) {
-		return basicAttack + weaponAttack - defense;
+		return basicAttack + weaponManager.weaponAttack[weaponManager.currWeaponIdx] - defense;
 	}
 
 	public int calculatePettingPower() {
@@ -480,7 +478,6 @@ public class GameManager : MonoBehaviour {
 		data.numWhiteFish = ingredientManager.numWhiteFish;
 
 		data.basicAttack = basicAttack;
-		data.weaponAttack = weaponAttack;
 
 		data.basicCatPettingPower = basicCatPettingPower;
 		data.itemCatPettingPower = itemCatPettingPower;
@@ -506,13 +503,13 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void buyWeapon(string itemID) {
-		if (itemID.Equals ("Broomstick")) {
-			weaponAttack = 3;
-		} else if (itemID.Equals ("FeatherDuster")) {
-			weaponAttack = 2;
-		}
+		//if (itemID.Equals ("Broomstick")) {
+		//	weaponAttack = 3;
+		//} else if (itemID.Equals ("FeatherDuster")) {
+		//	weaponAttack = 2;
+		//}
 
-		PlayerDataManager.playerData.itemsOwned.Add (itemID);
+		//PlayerDataManager.playerData.itemsOwned.Add (itemID);
 	}
 
 	public void buyCatSupply(string itemID) {
@@ -524,7 +521,7 @@ public class GameManager : MonoBehaviour {
 			itemCatPettingPower = 2;
 		}
 
-		PlayerDataManager.playerData.itemsOwned.Add (itemID);
+		//PlayerDataManager.playerData.itemsOwned.Add (itemID);
 	}
 
 	// Update is called once per frame

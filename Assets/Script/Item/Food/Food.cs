@@ -21,7 +21,7 @@ public class Food : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	protected void Update () {
 		
 		if ((lastLoc == transform.position) && !active) {
 			active = true;

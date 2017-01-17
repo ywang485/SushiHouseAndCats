@@ -24,6 +24,7 @@ public class Cat : MonoBehaviour {
 	[HideInInspector] public CatEatingState eatingState;
 	[HideInInspector] public CatLeavingState leavingState;
 	[HideInInspector] public CatEscapingState escapingState;
+	[HideInInspector] public CatPlayState playState;
 
 	public bool facingRight = false;
 
@@ -32,6 +33,7 @@ public class Cat : MonoBehaviour {
 	public Vector2 targetPosition;
 	public bool towardsFloor = false;
 	public bool towardsFood = false;
+	public bool played = false;
 
 	public CatState currState;
 
@@ -121,6 +123,7 @@ public class Cat : MonoBehaviour {
 		eatingState = new CatEatingState (this);
 		leavingState = new CatLeavingState (this);
 		escapingState = new CatEscapingState (this);
+		playState = new CatPlayState (this);
 
 		bubble = gameObject.GetComponentInChildren<Bubble> ();
 		icon = gameObject.GetComponentInChildren<Icon> ();

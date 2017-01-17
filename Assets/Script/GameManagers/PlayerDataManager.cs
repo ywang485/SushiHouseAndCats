@@ -21,7 +21,7 @@ public class PlayerDataManager : MonoBehaviour {
 		if (playerData.playerName == "") {
 			playerData.playerName = "SomePlayer";
 		}
-		playerData.itemsOwned = new ArrayList ();
+		//playerData.itemsOwned = new ArrayList ();
 		SceneManager.LoadScene ("OpeningStory");
 		Debug.Log ("New Game Started as " + playerData.playerName);
 	}

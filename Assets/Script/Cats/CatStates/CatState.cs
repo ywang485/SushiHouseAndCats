@@ -59,6 +59,11 @@ public class CatState {
 			cat.currState = cat.leavingState;
 	}
 
+	public virtual void ToPlay() {
+		cat.playState.resetPlayingStartTime();
+		cat.currState = cat.playState;
+	}
+
 	public virtual void ToEscaping() {
 		if (cat.currState != cat.escapingState) {
 			cat.towardsFood = false;

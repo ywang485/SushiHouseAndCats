@@ -14,6 +14,7 @@ public class WeaponStoreManagement : MonoBehaviour {
 
 	public Button catFoodUpgradeBtn;
 	public Button catTreatsUpgradeBtn;
+	public Button featherDusterUpgradeBtn;
 
 
 	// Use this for initialization
@@ -52,6 +53,12 @@ public class WeaponStoreManagement : MonoBehaviour {
 		} else {
 			catTreatsUpgradeBtn.interactable = false;
 		}
+
+		if (gameManager.catManager.catPopularity <= -20 && !gameManager.weaponManager.weaponStatus [3] && gameManager.numGold >= 200) {
+			featherDusterUpgradeBtn.interactable = true;
+		} else {
+			featherDusterUpgradeBtn.interactable = false;
+		}
 			
 	}
 
@@ -77,5 +84,11 @@ public class WeaponStoreManagement : MonoBehaviour {
 		gameManager.numGold -= 50;
 		gameManager.weaponManager.weaponStatus [1] = true;
 		Debug.Log ("Cat treats obtained.");
+	}
+
+	public void featherDusterUpgrade() {
+		gameManager.numGold -= 200;
+		gameManager.weaponManager.weaponStatus [3] = true;
+		Debug.Log ("Featherduster obtained.");
 	}
 }

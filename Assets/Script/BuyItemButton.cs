@@ -11,9 +11,9 @@ public class BuyItemButton : MonoBehaviour {
 		Text priceText = gameObject.GetComponentInChildren<Text> ();
 		priceText.text = price.ToString () + "G";
 
-		if (GameManager.getGameManager ().numGold < price || PlayerDataManager.playerData.itemsOwned.Contains(itemName)) {
-			gameObject.GetComponent<Button> ().interactable = false;
-		}
+		//if (GameManager.getGameManager ().numGold < price || PlayerDataManager.playerData.itemsOwned.Contains(itemName)) {
+		//	gameObject.GetComponent<Button> ().interactable = false;
+		//}
 
 	}
 
