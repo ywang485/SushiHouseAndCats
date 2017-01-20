@@ -5,9 +5,9 @@ public class CatLookingForFoodState : CatState {
 
 	private GameManager gameManager;
 
-	private int nextWayPoint;
+	public int nextWayPoint;
 	private int searchingStartTime;
-	private Transform[] wayPoints;
+	public Transform[] wayPoints;
 
 	public float actualSpeed;
 
@@ -30,7 +30,6 @@ public class CatLookingForFoodState : CatState {
 			
 		Vector2 currPos = new Vector2 (cat.transform.position.x, cat.transform.position.y);
 		cat.transform.position = Vector2.MoveTowards(currPos, cat.targetPosition, actualSpeed * Time.deltaTime);
-
 	}
 
 	public override void OnTriggerEnter2D(Collider2D other) {
@@ -38,8 +37,9 @@ public class CatLookingForFoodState : CatState {
 		if (other.CompareTag ("CatWaypoint")) {
 			nextWayPoint = (nextWayPoint + 1) % wayPoints.Length;
 		}
-
+			
 		cat.targetPosition = wayPoints [nextWayPoint].position;
+
 		if (nextWayPoint == 1) {
 			//cat.towardsFloor = true;
 		}
@@ -61,19 +61,18 @@ public class CatLookingForFoodState : CatState {
 				ToGoTowardsFood ();
 			}
 		} else if (other.CompareTag ("Food")) {
-			if (!((Food)other.gameObject.GetComponent<Food> ()).finished && ((Food)other.gameObject.GetComponent<Food> ()).active) {
+			if (!((Food)other.gameObject.GetComponent<Food> ()).finished) {
 				cat.setTargetSushiPlate (other.gameObject);
 				ToGoTowardsFood ();
 			}
-			
-		} else if (other.CompareTag ("Treats")) {
-			GameObject.Destroy (other.gameObject);
-			GameManager.getGameManager ().catManager.increaseCatPopularity (1);
-			//if (PlayerDataManager.playerData.catMoodIconEnabled) {
-			cat.showMoodIcon (2);
-			//}
 		} else if (other.CompareTag ("Toy")) {
-			if (!cat.played && ((Food)other.gameObject.GetComponent<Food> ()).active) {
+			if (!cat.played && !((Toy)other.gameObject.GetComponent<Toy> ()).finished) {
+				cat.showMoodIcon (2);
+				cat.setTargetSushiPlate (other.gameObject);
+				ToGoTowardsFood ();
+			}
+		} else if (other.CompareTag ("Treat")) {
+			if (!((Toy)other.gameObject.GetComponent<Toy> ()).finished) {
 				cat.showMoodIcon (2);
 				cat.setTargetSushiPlate (other.gameObject);
 				ToGoTowardsFood ();

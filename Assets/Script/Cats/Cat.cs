@@ -239,6 +239,8 @@ public class Cat : MonoBehaviour {
 			}
 		}
 		updateAnim();
+		Debug.Log ("Current State: ");
+		Debug.Log (currState.ToString());
 	}
 
 	void OnMouseOver() {

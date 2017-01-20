@@ -12,7 +12,6 @@ public class WeaponManager : MonoBehaviour {
 	public GameObject[] weaponList;
 	public bool[] weaponStatus;
 	public int[] weaponCost;
-	public int[] weaponAttack;
 
 	// UI Element
 	public Image weaponIndicator;
@@ -24,7 +23,7 @@ public class WeaponManager : MonoBehaviour {
 	void playWeaponAnimation(Vector2 targetLoc) {
 		Transform playerTransform = GameObject.Find ("player").transform;
 		GameObject weaponObj = (GameObject)GameObject.Instantiate (weaponList[currWeaponIdx], playerTransform.position, Quaternion.identity);
-		BasicWeapon bw = weaponObj.GetComponent<BasicWeapon> ();
+		Item bw = weaponObj.GetComponent<Item> ();
 		bw.targetLoc = targetLoc;
 	}
 

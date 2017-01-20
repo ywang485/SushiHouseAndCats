@@ -19,10 +19,18 @@ public class CatEatingState : CatState {
 		if (totalMinute == lastActivationTime) {
 			return;
 		}
+		GameObject targetSushi = cat.getTargetSushiPlate ();
+		int catPopInc;
+		Food food = targetSushi.GetComponent<Food> ();
+		if (food == null) {
+			catPopInc = 2;
+		} else {
+			catPopInc = food.catPopInc;
+		}
 
 		if (totalMinute % cat.getEatingSpeed() == 0) {
 
-			GameObject targetSushi = cat.getTargetSushiPlate ();
+
 			if (targetSushi == null) {
 				Debug.Log ("target Sushi is Null. ");
 			}
@@ -30,7 +38,7 @@ public class CatEatingState : CatState {
 			HPSubject sub = obj.GetComponent<HPSubject> ();
 			Debug.Log ("sub: " + sub);
 			if (sub == null) {
-				GameManager.getGameManager ().catManager.increaseCatPopularity (2);
+				GameManager.getGameManager ().catManager.increaseCatPopularity (catPopInc);
 				if (PlayerDataManager.playerData.catMoodIconEnabled) {
 					cat.showMoodIcon (2);
 				}
@@ -42,13 +50,12 @@ public class CatEatingState : CatState {
 				foodObj.finished = true;
 				ToLeaving ();
 				//GameObject.Destroy (targetSushi.gameObject);
-				ToLeaving ();
 				return;
 			}
 			sub.beAttacked (cat.getEatingPower ());
 
 			if (sub.HP <= 0) {
-				GameManager.getGameManager ().catManager.increaseCatPopularity (2);
+				GameManager.getGameManager ().catManager.increaseCatPopularity (catPopInc);
 				if (PlayerDataManager.playerData.catMoodIconEnabled) {
 					cat.showMoodIcon (2);
 				}

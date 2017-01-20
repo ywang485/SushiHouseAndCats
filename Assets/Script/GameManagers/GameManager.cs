@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public int calculateDamage(int defense) {
-		return basicAttack + weaponManager.weaponAttack[weaponManager.currWeaponIdx] - defense;
+		return basicAttack + weaponManager.weaponList[weaponManager.currWeaponIdx].GetComponent<Weapon>().basicDamage - defense;
 	}
 
 	public int calculatePettingPower() {

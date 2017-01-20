@@ -3,9 +3,9 @@ using System.Collections;
 
 public class Item : MonoBehaviour {
 
-	public Vector2 targetLoc;
-	public GameManager gameManager;
-	public float speed;
+	[HideInInspector] public Vector2 targetLoc;
+	[HideInInspector] public GameManager gameManager;
+	[HideInInspector] public float speed;
 	public string itemId;
 
 	public virtual string getItemId() {

@@ -9,10 +9,8 @@ public class CleanTrash : MonoBehaviour {
 
 			if (other.gameObject.tag == "Player") {
 
-				Food food = transform.parent.gameObject.GetComponent<Food> ();
-				if (food.active) {
-					GameObject.Destroy (food.gameObject);
-				}
+				Item item = transform.parent.gameObject.GetComponent<Item> ();
+				GameObject.Destroy (item.gameObject);
 
 			}
 
