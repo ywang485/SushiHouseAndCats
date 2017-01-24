@@ -13,7 +13,7 @@ public class HPSubject : MonoBehaviour {
 			HP = 0;
 		}
 
-		if (!hpbar.activeInHierarchy) {
+		if (HP != maxHP) {
 			hpbar.SetActive (true);
 		}
 	}

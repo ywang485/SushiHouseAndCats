@@ -10,6 +10,7 @@ public class Guest : MonoBehaviour {
 	[HideInInspector] public Bubble bubble;
 	[HideInInspector] public Icon icon;
 	[HideInInspector] public Rigidbody2D rb;
+	[HideInInspector] public HPSubject hpSub;
 
 	[HideInInspector] public GuestState currState;
 
@@ -127,10 +128,15 @@ public class Guest : MonoBehaviour {
 		animator.SetInteger ("State", 4);
 	
 		hideBubble ();
-
 	}
 
 	void Update() {
+		// Check Death
+		if (hpSub.HP <= 0) {
+			gameManager.playHurtSFX ();
+			GameObject.Destroy (gameObject);
+		}
+
 		currState.UpdateState ();
 	}
 
@@ -152,6 +158,8 @@ public class Guest : MonoBehaviour {
 		animator = GetComponent<Animator> ();
 		rb = gameObject.GetComponent<Rigidbody2D> ();
 		gameManager = GameManager.getGameManager ();
+
+		hpSub = GetComponent<HPSubject> ();
 
 		goTowardsCounterState = new GuestGoTowardsCounterState (this);
 		goTowardsTableState = new GuestGoTowardsTableState(this);

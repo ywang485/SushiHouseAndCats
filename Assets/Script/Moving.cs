@@ -12,30 +12,36 @@ public class Moving : MonoBehaviour {
 
 	private GameManager gameManager;
 
+	private HPSubject hpSub;
+
 	// Use this for initialization
 	void Start () {
 	
 		gameManager = GameManager.getGameManager ();
 		rb = gameObject.GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
-
+		hpSub = GetComponent<HPSubject> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (hpSub.HP <= 0) {
+			gameManager.gameover ();
+		}
 
 		rb.velocity = Vector2.zero;
 		rb.angularVelocity = 0f;
 
 		float movex = Input.GetAxis ("Horizontal");
 		float movey = Input.GetAxis ("Vertical");
-		rb.velocity = Utilities.coordinateReverseTransform(new Vector2 (movex * speed * (gameManager.movingSpeed + 1), movey * speed * (gameManager.movingSpeed + 1) ));
-		//rb.velocity = new Vector2 (movex * speed, movey * speed);
+		//rb.velocity = Utilities.coordinateReverseTransform(new Vector2 (movex * speed * (gameManager.movingSpeed + 1), movey * speed * (gameManager.movingSpeed + 1) ));
+		rb.velocity = new Vector2 ((movex * speed * 1f + movey * speed * (-1f)) * (gameManager.movingSpeed + 1), (movex * speed * 0.5f + movey * speed * (0.5f)) * (gameManager.movingSpeed + 1));
 		transform.localRotation = Quaternion.identity;
 
 		// Test
-		// Debug.Log(new Vector2(movex, movey));
-		// Debug.Log(rb.velocity);
+		Debug.Log(new Vector2(movex, movey));
+		Debug.Log(rb.velocity);
 
 		if (movex == 0 && movey == 0) {
 			animator.SetBool ("still", true);

@@ -498,7 +498,7 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	void gameover() {
+	public void gameover() {
 		SceneManager.LoadScene ("GameOver");
 	}
 
