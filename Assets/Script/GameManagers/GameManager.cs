@@ -409,6 +409,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void openStoreUI() {
+		pauseClock ();
 		instantiateUI (storeUI);
 	}
 

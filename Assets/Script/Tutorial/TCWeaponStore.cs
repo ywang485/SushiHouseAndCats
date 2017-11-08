@@ -11,7 +11,7 @@ public class TCWeaponStore : TutorialChapter {
 	
 	// Update is called once per frame
 	void Update () {
-		if (GameObject.Find("WeaponStoreUI") != null) {
+		if (GameObject.Find("WeaponStoreUI(Clone)") != null) {
 			GameObject.Destroy (gameObject);
 		}
 	}

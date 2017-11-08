@@ -17,4 +17,8 @@ public class SCUI : MonoBehaviour {
 	public void closeUI() {
 		GameObject.Destroy(gameObject);
 	}
+
+	void OnDestroy() {
+		GameManager.getGameManager ().unpauseClock ();
+	}
 }
