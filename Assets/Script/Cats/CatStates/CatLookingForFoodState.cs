@@ -5,7 +5,7 @@ public class CatLookingForFoodState : CatState {
 
 	private GameManager gameManager;
 
-	public int nextWayPoint;
+	public Location nextWayPoint;
 	private int searchingStartTime;
 	public Transform[] wayPoints;
 
@@ -13,7 +13,6 @@ public class CatLookingForFoodState : CatState {
 
 	public CatLookingForFoodState(Cat subjCat) : base(subjCat) {
 		gameManager = GameManager.getGameManager ();
-		wayPoints = gameManager.mapManager.catWanderingWayPoints;
 		actualSpeed = cat.getSpeed ();
 	}
 
@@ -34,26 +33,27 @@ public class CatLookingForFoodState : CatState {
 
 	public override void OnTriggerEnter2D(Collider2D other) {
 
-		if (other.CompareTag ("CatWaypoint")) {
-			nextWayPoint = (nextWayPoint + 1) % wayPoints.Length;
+		MapManager.LocType currLocType = nextWayPoint.locType;
+
+		if (other.CompareTag ("Location")) {
+			int max = nextWayPoint.reachableLocs.Length;
+			nextWayPoint = nextWayPoint.reachableLocs [Random.Range (0, max-1)];
 		}
 			
-		cat.targetPosition = wayPoints [nextWayPoint].position;
+		cat.targetPosition = nextWayPoint.transform.position;
 
-		if (nextWayPoint == 1) {
-			//cat.towardsFloor = true;
-		}
-		else if (nextWayPoint == 2) {
-			actualSpeed = cat.speedScale (1);
-			cat.towardsFloor = false;
-		} else if (nextWayPoint == 3) {
-			cat.towardsFloor = true;
-			actualSpeed = cat.speedScale (2.0f);
-		} else if (nextWayPoint == 4) {
-			cat.towardsFloor = false;
+		if (nextWayPoint.locType == currLocType) {
+			cat.jumping = false;
 			actualSpeed = cat.speedScale (1.0f);
-		} else if (nextWayPoint == 0) {
-		} 
+		} else {
+			cat.jumping = true;
+			actualSpeed = cat.speedScale (2.0f);
+		}
+		//if (cat.attacking && other.CompareTag("Player_Range")) {
+		//	Debug.Log ("Player Detected!");
+		//	cat.attackingState.target = other.transform.parent.gameObject;
+		//	ToAttacking ();
+		//}
 		if (other.CompareTag ("Sushi")) {
 			Sushi sushi = other.GetComponent<Sushi> ();
 			if (cat.isWantedSushi (sushi.getSushiType ())) {
@@ -71,13 +71,7 @@ public class CatLookingForFoodState : CatState {
 				cat.setTargetSushiPlate (other.gameObject);
 				ToGoTowardsFood ();
 			}
-		} else if (other.CompareTag ("Treat")) {
-			if (!((Toy)other.gameObject.GetComponent<Toy> ()).finished) {
-				cat.showMoodIcon (2);
-				cat.setTargetSushiPlate (other.gameObject);
-				ToGoTowardsFood ();
-			}
-		}
+		} 
 
 	}
 

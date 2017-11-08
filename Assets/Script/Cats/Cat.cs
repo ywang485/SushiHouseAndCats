@@ -1,23 +1,33 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Cat : MonoBehaviour {
 
-	private static int defActPopThUp = 999;
-	private static int defActPopThDown = -999;
-	private static float speed = 1f;
+	static public readonly Dictionary<string, CatType> catTypes = new Dictionary<string, CatType>() {
+		{"generic-cat", new CatType("generic-cat", "It's just a cat.", "Animator/GenericCat")},
+		{"monster-cat-1", new CatType("monster-cat-1", "It's a monster", "Animator/MonsterCat1", 30, 1f)},
+		{"monster-cat-2", new CatType("monster-cat-2", "It's a monster", "Animator/MonsterCat2")},
+		{"canvas-cat", new CatType("canvas-cat", "It's a monster", "Animator/CanvasCat")},
+		{"book-cat", new CatType("book-cat", "It's a monster", "Animator/BookCat")},
+		{"adv-book-cat", new CatType("adv-book-cat", "It's a monster", "Animator/AdvBookCat")}
+	};
+		
 	private static int catPopValDecr = 2;
-	private static int eatingPower = 20;
-	private static int eatingSpeed = 1;
-	private static int searchingTime = 20;
 
-	public HPSubject hpsubj;
+	public string catTypeId;
+	private float speed = 1f;
+	private int eatingPower = 20;
+	private int eatingSpeed = 1;
+	private int searchingTime = 20;
+	public bool attacking = false;
+
+	private HPSubject hpsubj;
+	private Animator animator;
 
 	[HideInInspector] public Bubble bubble;
 	[HideInInspector] public Icon icon;
 	[HideInInspector] public GameManager gameManager;
-	[HideInInspector] public Animator animator;
 
 	[HideInInspector] public CatLookingForFoodState lookingForFoodState;
 	[HideInInspector] public CatGoTowardsFoodState goTowardsFoodState;
@@ -25,60 +35,53 @@ public class Cat : MonoBehaviour {
 	[HideInInspector] public CatLeavingState leavingState;
 	[HideInInspector] public CatEscapingState escapingState;
 	[HideInInspector] public CatPlayState playState;
+	[HideInInspector] public CatAvoidingState avoidingState;
+	[HideInInspector] public CatAttackingState attackingState;
+
+
+	[HideInInspector] public Location currLoc;
 
 	public bool facingRight = false;
 
 	private GameObject targetSushiPlate;
-	private bool isPet;
+	private bool isPet = false;
 	public Vector2 targetPosition;
-	public bool towardsFloor = false;
+	public bool jumping = false;
 	public bool towardsFood = false;
 	public bool played = false;
+	private bool hasDeath = false;
 
 	public CatState currState;
 
-	public virtual int getActPopThUp() {
-		return defActPopThUp;
-	}
-
-	public virtual int getActPopThDown() {
-		return defActPopThDown;
+	public float getSpeed() {
+		return speed;
 	}
 
 	public float speedScale(float scale) {
 		return speed * scale;
 	}
 
-	public virtual int getSearchingTime() {
-		return Cat.searchingTime;
-	}
-		
-
-	public virtual float getSpeed() {
-		return Cat.speed;
+	public int getEatingPower() {
+		return eatingPower;
 	}
 
-	public virtual int getCatPopValDecr() {
-		return Cat.catPopValDecr;
+	public int getEatingSpeed() {
+		return eatingSpeed;
 	}
 
-	public virtual int getEatingPower() {
-		return Cat.eatingPower;
-	}
-
-	public virtual int getEatingSpeed() {
-		return Cat.eatingSpeed;
+	public int getSearchingTime() {
+		return searchingTime;
 	}
 
 	public void showMoodIcon(int mood) {
 		icon.setIcon (gameManager.moodIcons[mood]);
 		bubble.show ();
 	}
-		
+
 	public void showSushiIcon () {
 		Debug.Log ("Show Sushi Icon Executed!");
-		SushiManager.Sushi sushi = getSushiWanted () [0];
-		icon.setIcon (gameManager.sushiManager.sushiSprite[SushiManager.sushi2number(sushi)]);
+		string sushi = getSushiWanted () [0];
+		icon.setIcon (Resources.Load(SushiManager.sushiTypes[sushi].getSpritePath_s(), typeof(Sprite)) as Sprite);
 		bubble.show ();
 	}
 
@@ -89,20 +92,20 @@ public class Cat : MonoBehaviour {
 		}
 	}
 
-	public virtual List<SushiManager.Sushi> getSushiWanted() {
-		List<SushiManager.Sushi> sushiWanted = new List<SushiManager.Sushi>();
-
-		sushiWanted.Add (SushiManager.Sushi.CaliforniaRoll);
-		sushiWanted.Add (SushiManager.Sushi.SalmonNigiri);
-		sushiWanted.Add (SushiManager.Sushi.SalmonRoll);
-		sushiWanted.Add (SushiManager.Sushi.TamagoNigiri);
-		sushiWanted.Add (SushiManager.Sushi.TunaNigiri);
-		sushiWanted.Add (SushiManager.Sushi.WhiteTunaNigiri);
+	public virtual List<string> getSushiWanted() {
+		List<string> sushiWanted = new List<string> () {
+			"california-roll",
+			"salmon-nigiri",
+			"salmon-roll",
+			"tamago-nigiri",
+			"tuna-nigiri",
+			"white-tuna-nigiri"
+		};
 
 		return sushiWanted;
 	}
 
-	public bool isWantedSushi(SushiManager.Sushi sushi) {
+	public bool isWantedSushi(string sushi) {
 		return getSushiWanted ().Contains (sushi);
 	}
 
@@ -124,6 +127,8 @@ public class Cat : MonoBehaviour {
 		leavingState = new CatLeavingState (this);
 		escapingState = new CatEscapingState (this);
 		playState = new CatPlayState (this);
+		avoidingState = new CatAvoidingState (this);
+		attackingState = new CatAttackingState (this);
 
 		bubble = gameObject.GetComponentInChildren<Bubble> ();
 		icon = gameObject.GetComponentInChildren<Icon> ();
@@ -149,29 +154,75 @@ public class Cat : MonoBehaviour {
 			return 0;
 		}
 	}
+		
+	private void generateCat() {
+		if (PlayerDataManager.getPlayerData() != null) {
+			string[] catList = new string[PlayerDataManager.getPlayerData().catTypes.Keys.Count];
+			PlayerDataManager.getPlayerData().catTypes.Keys.CopyTo (catList, 0);
+			this.catTypeId = catList[Random.Range (0, catList.Length)];
+			this.speed = catTypes [catTypeId].getSpeed ();
+			if (catTypes [catTypeId].getMaxHp() > 0) {
+				hasDeath = true;
+				hpsubj.maxHP = catTypes [catTypeId].getMaxHp ();
+				hpsubj.HP = hpsubj.maxHP;
+			}
+			Debug.Log (catTypeId + " spawned");
+		} else {
+			string[] demoCats = new string[catTypes.Keys.Count];
+			catTypes.Keys.CopyTo (demoCats,0);
+			this.catTypeId = demoCats [Random.Range (0, demoCats.Length)];
+			Debug.Log (catTypeId + " spawned!");
+		}
+	}
 
 	public void init() {
-		currState = lookingForFoodState;
-		lookingForFoodState.resetSearchingStartTime ();
-		if (PlayerDataManager.playerData.catOrderEnabled) {
-			showSushiIcon ();
-		}
+
 		hpsubj = GetComponent<HPSubject> ();
 		if (hpsubj != null) {
 			hpsubj.HP = hpsubj.maxHP;
 		}
+
+		generateCat ();
+		animator.runtimeAnimatorController = Resources.Load (Cat.catTypes [catTypeId].getAnimator(), typeof(RuntimeAnimatorController)) as RuntimeAnimatorController;
+
+		currState = lookingForFoodState;
+		lookingForFoodState.resetSearchingStartTime ();
+		//if (PlayerDataManager.getPlayerData().catOrderEnabled) {
+		//	showSushiIcon ();
+		//}
 		hideBubble ();
-		animator.SetInteger("animNo", 4);
+		toWalkFront ();
 		lookingForFoodState.actualSpeed = speedScale (2.0f);
+
 
 	}
 
-	public void updateAnim() {
+	private void toWalkFront() {
+		animator.SetInteger("State", 1);
+	}
+
+	private void toWalkBack() {
+		animator.SetInteger("State", 2);
+	}
+
+	private void toJumpFront() {
+		animator.SetInteger("State", 3);
+	}
+
+	private void toJumpBack() {
+		animator.SetInteger("State", 4);
+	}
+
+	private void toStand() {
+		animator.SetInteger ("State", 0);
+	}
+
+	private void updateAnim() {
 		Vector2 drct = Utilities.getDirection (new Vector2 (transform.position.x, transform.position.y), targetPosition);
 		float movex = drct.x;
 		float movey = drct.y;
 		if (movex == 0 && movey == 0) {
-			animator.SetInteger ("animNo", 3);
+			toStand ();
 		} else {
 			// Moving right: right, back
 			if (movex > 0) {
@@ -180,11 +231,11 @@ public class Cat : MonoBehaviour {
 					facingRight = true;
 				}
 				if (towardsFood) {
-					animator.SetInteger ("animNo", 5);
-				} else if (towardsFloor) {
-					animator.SetInteger ("animNo", 5);
+					toJumpBack ();
+				} else if (jumping) {
+					toJumpBack ();
 				} else {
-					animator.SetInteger ("animNo", 2);
+					toWalkBack ();
 				}
 				// Moving up: left, back
 			} else if (movey > 0) {
@@ -193,11 +244,11 @@ public class Cat : MonoBehaviour {
 					facingRight = false;
 				}
 				if (towardsFood) {
-					animator.SetInteger ("animNo", 5);
-				} else if (towardsFloor) {
-					animator.SetInteger ("animNo", 5);
+					toJumpBack ();
+				} else if (jumping) {
+					toJumpBack ();
 				} else {
-					animator.SetInteger ("animNo", 2);
+					toWalkBack ();
 				}
 				// Moving left: left, front
 			} else if (movex < 0) {
@@ -206,11 +257,11 @@ public class Cat : MonoBehaviour {
 					facingRight = false;
 				}
 				if (towardsFood) {
-					animator.SetInteger ("animNo", 4);
-				} else if (towardsFloor) {
-					animator.SetInteger ("animNo", 4);
+					toJumpFront ();
+				} else if (jumping) {
+					toJumpFront ();
 				} else {
-					animator.SetInteger ("animNo", 1);
+					toWalkFront ();
 				}
 				// Moving down: right, front
 			} else if (movey < 0) {
@@ -219,15 +270,15 @@ public class Cat : MonoBehaviour {
 					facingRight = true;
 				}
 				if (towardsFood) {
-					animator.SetInteger ("animNo", 4);
-				} else if (towardsFloor) {
-					animator.SetInteger ("animNo", 4);
+					toJumpFront ();
+				} else if (jumping) {
+					toJumpFront ();
 				} else {
-					animator.SetInteger ("animNo", 1);
+					toWalkFront ();
 				}
 			}
 		}
-			
+
 	}
 
 
@@ -235,19 +286,27 @@ public class Cat : MonoBehaviour {
 		currState.UpdateState ();
 		if (hpsubj != null) {
 			if (hpsubj.HP <= 0) {
-				gameObject.SetActive(false);
+				gameManager.messagingCenter.eventHappened (new CatDefeatedEvent (catTypeId));
+				if (hasDeath) {
+					gameManager.catManager.decreaseCatPopularity (Cat.catPopValDecr, catTypeId, 1);
+					GameObject.Destroy (gameObject);
+				} else {
+					if (PlayerDataManager.getPlayerData().catMoodIconEnabled) {
+						showMoodIcon (3);
+					}
+					currState.ToEscaping ();
+				}
 			}
 		}
 		updateAnim();
-		Debug.Log ("Current State: ");
-		Debug.Log (currState.ToString());
 	}
 
 	void OnMouseOver() {
+
 		if (Input.GetMouseButtonDown (0)) {
 			currState.OnLeftClick ();
 		}
-			
+
 		if (Input.GetMouseButtonDown (1)) {
 			currState.OnRightClick ();
 		}
@@ -255,34 +314,63 @@ public class Cat : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
+		if (other.tag == "Location") {
+			if (currLoc.locType == other.GetComponent<Location> ().locType) {
+				jumping = false;
+			} else {
+				jumping = true;
+			}	
+			currLoc = other.GetComponent<Location> ();
+		}
+		if (other.tag == "Shield") {
+			Shield shield = other.GetComponent<Shield> ();
+			if (shield.active) {
+				int avoidingStartTime = gameManager.getCurrTimeInMinute ();
+				avoidingState.avoidingEndTime = avoidingStartTime + shield.power;
+				avoidingState.avoidingDirection = transform.position - other.transform.position;
+				currState.ToAvoiding ();
+			}
+		}
+		if (other.tag == "Treat") {
+			if (!((Toy)other.gameObject.GetComponent<Toy> ()).finished) {
+				showMoodIcon (2);
+				setTargetSushiPlate (other.gameObject);
+				currState.ToGoTowardsFood ();
+			}
+		}
 		if (other.tag == "Weapon") {
-			GameObject.Destroy(other.gameObject);
-			if (hpsubj == null) {
-				if (PlayerDataManager.playerData.catMoodIconEnabled) {
+			gameManager.playSFX (GameManager.grumpyMeowSFX);
+			GameObject.Destroy (other.gameObject);
+			if (!hasDeath) {
+				gameManager.messagingCenter.eventHappened (new CatDefeatedEvent (catTypeId));
+				if (PlayerDataManager.getPlayerData().catMoodIconEnabled) {
 					showMoodIcon (3);
 				}
 				currState.ToEscaping ();
 			} else {
 				hpsubj.beAttacked (GameManager.getGameManager ().calculateDamage (0));
+				if (attacking) {
+					attackingState.target = GameObject.Find ("player");
+					currState.ToAttacking ();
+				}
+
+				// knockback
+				transform.Translate(transform.position - other.transform.position);
 			}
 		}
 		currState.OnTriggerEnter2D (other);
 	}
 
-	void OnEnable(){
-		isPet = false;
-	}
-
 	public void pet() {
 		if (!isPet) {
-			if (PlayerDataManager.playerData.catMoodIconEnabled) {
+			if (PlayerDataManager.getPlayerData().catMoodIconEnabled) {
 				showMoodIcon (2);
 			}
 			Debug.Log ("Cat being pet!");
 			lookingForFoodState.resetSearchingStartTime ();
-			gameManager.catManager.increaseCatPopularity (gameManager.calculatePettingPower());
+			gameManager.catManager.increaseCatPopularity (gameManager.calculatePettingPower(), catTypeId, 1);
 			isPet = true;
 		}
 	}
-
+		
 }

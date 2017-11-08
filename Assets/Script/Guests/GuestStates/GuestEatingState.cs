@@ -18,23 +18,23 @@ public class GuestEatingState : GuestState {
 		HPSubject hpSub = guest.target_table.sushiPlate.GetComponent<HPSubject> ();
 		if (hpSub.HP < hpSub.maxHP) {
 			guest.showMoodIcon (1);
-			gameManager.guestManager.humanPopularity -= guest.getPopValueDec ();
+			PlayerDataManager.getPlayerData().humanPopularity -= guest.getPopValueDec ();
 			ToLeaving ();
-			gameManager.playHurtSFX ();
+			gameManager.playSFX (GameManager.hurtSFX);
 		}
 		if (!guest.target_table.sushiPlate.gameObject.activeInHierarchy) {
 			guest.showMoodIcon (1);
-			gameManager.guestManager.humanPopularity -= guest.getPopValueDec ();
-			gameManager.playHurtSFX ();
+			PlayerDataManager.getPlayerData().humanPopularity -= guest.getPopValueDec ();
+			gameManager.playSFX (GameManager.hurtSFX);
 			ToLeaving ();
 		}
 		int eatingTotalTime = gameManager.getCurrTimeInMinute() - eatingStartTime;
 		if (eatingTotalTime > guest.getEatingTime()) {
 			gameManager.guestManager.increaseHumanPopularity (guest.getPopValue ());
-			gameManager.increaseNumGold (SushiManager.sushiPrice[guest.target_sushi]);
-			guest.target_table.sushiPlate.gameObject.SetActive (false);
+			gameManager.increaseNumGold (SushiManager.sushiTypes[guest.target_sushi].getPrice());			guest.target_table.sushiPlate.gameObject.SetActive (false);
 			guest.showMoodIcon (0);
-			gameManager.playCoinSFX ();
+			gameManager.playSFX (GameManager.coinSFX);
+			PlayerDataManager.getPlayerData().sushiSold += 1;
 			ToLeaving ();
 		}
 	}

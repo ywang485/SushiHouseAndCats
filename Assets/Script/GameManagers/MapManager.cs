@@ -3,6 +3,14 @@ using System.Collections;
 
 public class MapManager : MonoBehaviour {
 
+	public enum LocType{
+		Floor,
+		Table,
+		Counter,
+		Door,
+		Window
+	};
+
 	// Locations
 	public GameObject doorLoc;
 	public GameObject counterLoc;
@@ -10,8 +18,6 @@ public class MapManager : MonoBehaviour {
 
 	public GameObject[] cat_enterLocs;
 	public GameObject[] sushiOnCounterIndicators;
-
-	public Transform[] catWanderingWayPoints;
 
 	// Use this for initialization
 	protected virtual void init () {
@@ -57,8 +63,8 @@ public class MapManager : MonoBehaviour {
 		return no;
 	}
 		
-	public void setSushiOnCounter(int loc, SushiManager.Sushi sushi){
-		if (sushi == SushiManager.Sushi.NOTHING) {
+	public void setSushiOnCounter(int loc, string sushi){
+		if (sushi == "NOTHING") {
 			sushiOnCounterIndicators [loc].SetActive (false);
 			return;
 		}
@@ -80,7 +86,7 @@ public class MapManager : MonoBehaviour {
 		return no;
 	}
 
-	public Sushi findSpecificSushiOnCounter(SushiManager.Sushi sushiType, bool untouched = false) {
+	public Sushi findSpecificSushiOnCounter(string sushiType, bool untouched = false) {
 
 		Sushi sushiPlateFound = null;
 		for (int i = 0; i < sushiOnCounterIndicators.Length; i++) {
@@ -103,9 +109,9 @@ public class MapManager : MonoBehaviour {
 		return sushiPlateFound;
 	}
 
-	public Vector2 findCatSpawningLoc() {
+	public Location findCatSpawningLoc() {
 		int spawn_loc = Random.Range(0, cat_enterLocs.Length);
-		return new Vector2 (cat_enterLocs [spawn_loc].transform.position.x, cat_enterLocs [spawn_loc].transform.position.y);
+		return cat_enterLocs [spawn_loc].GetComponent<Location> ();
 	}
 
 	public Vector2 getDoorLocation() {

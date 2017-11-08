@@ -27,7 +27,7 @@ public class InGameKeyboardInputProcessor : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		/*
 		for (int i = 0; i < keyCodes.Length; i++) {
 			if (Input.GetKeyDown (keyCodes [i])) {
 				int numberPressed = i + 1;
@@ -39,6 +39,7 @@ public class InGameKeyboardInputProcessor : MonoBehaviour {
 				}
 			}
 		}
+		*/
 
 	}
 }

@@ -11,7 +11,7 @@ public class BuyTunaFish :  GenericInteractiveObject {
 
 	void buyTunaFish () {
 		if (Input.GetButtonDown ("Fire1")) {
-			if (base.gameManager.ingredientManager.buyTuna()) {
+			if (base.gameManager.ingredientManager.buyIngredient("tuna")) {
 				base.gameManager.showBottomText("Tuna Bought");
 			} else {
 				base.gameManager.showBottomText  ("Not Enough Gold.");

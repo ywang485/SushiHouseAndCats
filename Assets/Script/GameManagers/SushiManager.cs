@@ -5,128 +5,26 @@ using UnityEngine.UI;
 
 public class SushiManager : MonoBehaviour {
 
-	public enum Sushi{
-		TunaNigiri,
-		CaliforniaRoll,
-		SalmonNigiri,
-		SalmonRoll,
-		WhiteTunaNigiri,
-		TamagoNigiri,
-		NOTHING
+	static public readonly Dictionary<string, SushiType> sushiTypes = new Dictionary<string, SushiType>() {
+		{"tuna-nigiri", new SushiType("tuna-nigiri", 25, "Tuna Nigiri", "Sprites/Sushi/tunaNigiri_s", "Sprites/Sushi/tunaNigiri_b", new Dictionary<string, int>(){{"rice", 2}, {"tuna", 1}})},
+		{"california-roll", new SushiType("california-roll", 15, "California Roll", "Sprites/Sushi/californiaRoll_s", "Sprites/Sushi/californiaRoll_b", new Dictionary<string, int>(){{"rice", 2}, {"avocado", 1}, {"cucumber", 2}})},
+		{"salmon-nigiri", new SushiType("salmon-nigiri", 30, "Salmon Nigiri", "Sprites/Sushi/salmonNigiri_s", "Sprites/Sushi/salmonNigiri_b", new Dictionary<string, int>(){{"rice", 2}, {"salmon", 1}})},
+		{"salmon-roll", new SushiType("salmon-roll", 45, "Salmon Roll", "Sprites/Sushi/salmonRoll_s", "Sprites/Sushi/salmonRoll_b", new Dictionary<string, int>(){{"rice", 2}, {"avocado", 1}, {"cucumber", 1}, {"salmon", 1}})},
+		{"white-tuna-nigiri", new SushiType("white-tuna-nigiri", 25, "White Tuna Nigiri", "Sprites/Sushi/whiteTunaNigiri_s", "Sprites/Sushi/whiteTunaNigiri_b", new Dictionary<string, int>(){{"rice", 2}, {"white-tuna", 1}})},
+		{"tamago-nigiri", new SushiType("tamago-nigiri", 10, "Tamago Nigiri", "Sprites/Sushi/tamagoNigiri_s", "Sprites/Sushi/tamagoNigiri_b", new Dictionary<string, int>(){{"rice", 2}, {"egg", 1}})},
+		{"tuna-sashimi", new SushiType("tuna-sashimi", 50, "Tuna Sashimi", "Sprites/Sushi/tunaSashimi_s", "Sprites/Sushi/tunaSashimi_b", new Dictionary<string, int>(){{"tuna", 5}})},
+		{"peking-duck-nigiri", new SushiType("peking-duck-nigiri", 70, "Peking Duck Nigiri", "Sprites/Sushi/PekingDuckNigiri_s", "Sprites/Sushi/PekingDuckNigiri_b", new Dictionary<string, int>(){{"rice", 2}, {"duck-meat", 1}})}
 	};
 
-	// Prices
-	static public readonly Dictionary<Sushi, int> sushiPrice = new Dictionary<Sushi, int>() {
-		{Sushi.CaliforniaRoll, 10 },
-		{Sushi.SalmonNigiri, 30},
-		{Sushi.TunaNigiri, 25},
-		{Sushi.WhiteTunaNigiri, 25},
-		{Sushi.TamagoNigiri, 10},
-		{Sushi.SalmonRoll, 30}
-	};
-
-	// Sprites
-	public Sprite[] sushiSprite;
-
-	public static int sushi2number(SushiManager.Sushi sushi) {
-		if (sushi == SushiManager.Sushi.CaliforniaRoll) {
-			return 0;
-		} else if (sushi == SushiManager.Sushi.SalmonNigiri) {
-			return 1;
-		} else if (sushi == SushiManager.Sushi.TunaNigiri) {
-			return 2;
-		} else if (sushi == SushiManager.Sushi.WhiteTunaNigiri) {
-			return 3;
-		} else if (sushi == SushiManager.Sushi.TamagoNigiri) {
-			return 4;
-		} else if (sushi == SushiManager.Sushi.SalmonRoll) {
-			return 5;
+	public bool makeSushiCheck(string sushiId) {
+		SushiType targetSushi = SushiManager.sushiTypes [sushiId];
+		foreach (string ingredient in targetSushi.getIngredients().Keys) {
+			if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey(ingredient) || PlayerDataManager.getPlayerData().ingredients [ingredient] < targetSushi.getIngredients () [ingredient]) {
+				return false;
+			}
+			GameManager.getGameManager ().ingredientManager.consumeIngredient (ingredient, targetSushi.getIngredients () [ingredient]);
 		}
-		return -1;
-	}
-
-	public bool makeTunaNigiri(IngredientManager ingredientManager) {
-		int numRice = 2;
-		int numTuna = 1;
-
-		if (ingredientManager.numRice >= numRice && ingredientManager.numTuna >= numTuna) {
-			ingredientManager.consumeRice(numRice);
-			ingredientManager.consumeTuna(numTuna);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public bool makeCaliforniaRoll(IngredientManager ingredientManager) {
-		int numRice = 2;
-		int numAvocado = 1;
-		int numCucumber = 2;
-
-		if (ingredientManager.numRice >= numRice && ingredientManager.numAvocado >= numAvocado && ingredientManager.numCucumber >= numCucumber) {
-			ingredientManager.consumeAvocado (numAvocado);
-			ingredientManager.consumeCucumber (numCucumber);
-			ingredientManager.consumeRice (numRice);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public bool makeSalmonNigiri(IngredientManager ingredientManager) {
-		int numRice = 2;
-		int numSalmon = 1;
-
-		if (ingredientManager.numRice >= numRice && ingredientManager.numSalmon >= numSalmon) {
-			ingredientManager.consumeRice (numRice);
-			ingredientManager.consumeSalmon (numSalmon);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public bool makeSalmonRoll(IngredientManager ingredientManager) {
-		int numRice = 2;
-		int numSalmon = 1;
-		int numAvocado = 1;
-		int numCucumber = 1;
-
-		if (ingredientManager.numRice >= numRice && ingredientManager.numSalmon >= numSalmon && ingredientManager.numAvocado >= numAvocado && ingredientManager.numCucumber >= numCucumber) {
-			ingredientManager.consumeRice (numRice);
-			ingredientManager.consumeSalmon (numSalmon);
-			ingredientManager.consumeAvocado (numAvocado);
-			ingredientManager.consumeCucumber (numCucumber);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public bool makeWhiteTunaNigiri(IngredientManager ingredientManager) {
-		int numRice = 2;
-		int numWhiteTuna = 1;
-
-		if (ingredientManager.numRice >= numRice && ingredientManager.numWhiteFish >= numWhiteTuna) {
-			ingredientManager.consumeRice (numRice);
-			ingredientManager.consumeWhiteFish (numWhiteTuna);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public bool makeTamagoNigiri(IngredientManager ingredientManager) {
-		int numRice = 2;
-		int numEgg = 1;
-
-		if (ingredientManager.numRice >= numRice && ingredientManager.numEgg >= numEgg) {
-			ingredientManager.consumeEgg (numEgg);
-			ingredientManager.consumeRice (numRice);
-			return true;
-		} else {
-			return false;
-		}
+		return true;
 	}
 
 	// Use this for initialization

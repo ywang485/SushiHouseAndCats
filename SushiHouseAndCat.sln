@@ -1,11 +1,11 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-
-Project("{A8D64273-39B4-4D28-A341-C5D43A889D4E}") = "SushiHouseAndCat", "Assembly-CSharp-firstpass.csproj", "{FEFA7C27-15A4-1EA6-534C-E57549D5149C}"
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SushiHouseAndCat", "Assembly-CSharp-firstpass.csproj", "{FEFA7C27-15A4-1EA6-534C-E57549D5149C}"
 EndProject
-Project("{A8D64273-39B4-4D28-A341-C5D43A889D4E}") = "SushiHouseAndCat", "Assembly-CSharp.csproj", "{C5575AA1-BE89-8280-0C1E-7DB402A96413}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SushiHouseAndCat", "Assembly-CSharp.csproj", "{C5575AA1-BE89-8280-0C1E-7DB402A96413}"
 EndProject
-Project("{A8D64273-39B4-4D28-A341-C5D43A889D4E}") = "SushiHouseAndCat", "Assembly-CSharp-Editor.csproj", "{9BFB2F18-21AE-C444-6DEB-ED2CA0BB2F78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SushiHouseAndCat", "Assembly-CSharp-Editor.csproj", "{9BFB2F18-21AE-C444-6DEB-ED2CA0BB2F78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

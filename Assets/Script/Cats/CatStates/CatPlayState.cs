@@ -29,7 +29,7 @@ public class CatPlayState : CatState {
 
 		if (totalMinute > totalPlayTime) {
 			Toy toy = cat.getTargetSushiPlate ().GetComponent<Toy> ();
-			cat.gameManager.catManager.increaseCatPopularity (toy.catPopInc);
+			cat.gameManager.catManager.increaseCatPopularity (toy.catPopInc, cat.catTypeId, 1);
 			cat.lookingForFoodState.resetSearchingStartTime ();
 			cat.towardsFood = false;
 			cat.played = true;
@@ -45,7 +45,7 @@ public class CatPlayState : CatState {
 				SpriteRenderer sr = (SpriteRenderer)toy.gameObject.GetComponent<SpriteRenderer> ();
 				sr.sprite = finishedSprite;
 			}
-			cat.targetPosition = cat.lookingForFoodState.wayPoints [cat.lookingForFoodState.nextWayPoint].position;
+			cat.targetPosition = cat.lookingForFoodState.nextWayPoint.transform.position;
 		}
 
 	}

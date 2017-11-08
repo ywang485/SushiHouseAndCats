@@ -25,36 +25,36 @@ public class WeaponStoreManagement : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Button throwingSpeedUpgradeBtn = throwingSpeedUpgradeText.GetComponentInParent<Button> ();
-		throwingSpeedUpgradeCost = (int)(100 + (gameManager.weaponSpeed - 10.0f) * 1000.0f);
+		throwingSpeedUpgradeCost = (int)(100 + (PlayerDataManager.getPlayerData().weaponSpeed - 10.0f) * 1000.0f);
 		throwingSpeedUpgradeText.text = "+ Throwing Speed (" + throwingSpeedUpgradeCost + "G)";
-		if (gameManager.numGold >= throwingSpeedUpgradeCost) {
+		if (PlayerDataManager.getPlayerData().numGold >= throwingSpeedUpgradeCost) {
 			throwingSpeedUpgradeBtn.interactable = true;
 		} else {
 			throwingSpeedUpgradeBtn.interactable = false;
 		}
 
 		Button movingSpeedUpgradeBtn = movingSpeedUpgradeText.GetComponentInParent<Button> ();
-		movingSpeedUpgradeCost = (int)(100 + (gameManager.movingSpeed) * 1000.0f);
+		movingSpeedUpgradeCost = (int)(100 + (PlayerDataManager.getPlayerData().movingSpeed) * 1000.0f);
 		movingSpeedUpgradeText.text = "+ Moving Speed (" + movingSpeedUpgradeCost + "G)";
-		if (gameManager.numGold >= movingSpeedUpgradeCost) {
+		if (PlayerDataManager.getPlayerData().numGold >= movingSpeedUpgradeCost) {
 			movingSpeedUpgradeBtn.interactable = true;
 		} else {
 			movingSpeedUpgradeBtn.interactable = false;
 		}
 
-		if (gameManager.catManager.catPopularity > 50 && !gameManager.weaponManager.weaponStatus [2] && gameManager.numGold >= 100) {
+		if (PlayerDataManager.getPlayerData().catPopularity > 50 && !PlayerDataManager.getPlayerData().weaponStatus [2] && PlayerDataManager.getPlayerData().numGold >= 100) {
 			catFoodUpgradeBtn.interactable = true;
 		} else {
 			catFoodUpgradeBtn.interactable = false;
 		}
 
-		if (gameManager.catManager.catPopularity > 20 && !gameManager.weaponManager.weaponStatus [1] && gameManager.numGold >= 50) {
+		if (PlayerDataManager.getPlayerData().catPopularity > 20 && !PlayerDataManager.getPlayerData().weaponStatus [1] && PlayerDataManager.getPlayerData().numGold >= 50) {
 			catTreatsUpgradeBtn.interactable = true;
 		} else {
 			catTreatsUpgradeBtn.interactable = false;
 		}
 
-		if (gameManager.catManager.catPopularity <= -20 && !gameManager.weaponManager.weaponStatus [3] && gameManager.numGold >= 200) {
+		if (PlayerDataManager.getPlayerData().catPopularity <= -20 && !PlayerDataManager.getPlayerData().weaponStatus [3] && PlayerDataManager.getPlayerData().numGold >= 200) {
 			featherDusterUpgradeBtn.interactable = true;
 		} else {
 			featherDusterUpgradeBtn.interactable = false;
@@ -63,32 +63,32 @@ public class WeaponStoreManagement : MonoBehaviour {
 	}
 
 	public void throwingSpeedUpgrade() {
-		gameManager.weaponSpeed += 0.2f;
-		gameManager.numGold -= throwingSpeedUpgradeCost;
-		Debug.Log ("Current speed: " + gameManager.weaponSpeed);
+		PlayerDataManager.getPlayerData().weaponSpeed += 0.2f;
+		PlayerDataManager.getPlayerData().numGold -= throwingSpeedUpgradeCost;
+		Debug.Log ("Current speed: " + PlayerDataManager.getPlayerData().weaponSpeed);
 	}
 
 	public void movingSpeedUpgrade() {
-		gameManager.movingSpeed += 0.2f;
-		gameManager.numGold -= movingSpeedUpgradeCost;
-		Debug.Log ("Current speed: " + gameManager.movingSpeed);
+		PlayerDataManager.getPlayerData().movingSpeed += 0.2f;
+		PlayerDataManager.getPlayerData().numGold -= movingSpeedUpgradeCost;
+		Debug.Log ("Current speed: " + PlayerDataManager.getPlayerData().movingSpeed);
 	}
 
 	public void catFoodUpgrade() {
-		gameManager.numGold -= 100;
-		gameManager.weaponManager.weaponStatus [2] = true;
+		PlayerDataManager.getPlayerData().numGold -= 100;
+		PlayerDataManager.getPlayerData().weaponStatus [2] = true;
 		Debug.Log ("Cat food obtained.");
 	}
 
 	public void catTreatsUpgrade() {
-		gameManager.numGold -= 50;
-		gameManager.weaponManager.weaponStatus [1] = true;
+		PlayerDataManager.getPlayerData().numGold -= 50;
+		PlayerDataManager.getPlayerData().weaponStatus [1] = true;
 		Debug.Log ("Cat treats obtained.");
 	}
 
 	public void featherDusterUpgrade() {
-		gameManager.numGold -= 200;
-		gameManager.weaponManager.weaponStatus [3] = true;
+		PlayerDataManager.getPlayerData().numGold -= 200;
+		PlayerDataManager.getPlayerData().weaponStatus [3] = true;
 		Debug.Log ("Featherduster obtained.");
 	}
 }

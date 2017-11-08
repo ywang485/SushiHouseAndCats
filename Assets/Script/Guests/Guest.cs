@@ -25,7 +25,7 @@ public class Guest : MonoBehaviour {
 	private static int popValueDec = 5;
 
 	[HideInInspector] public Table target_table;
-	[HideInInspector] public SushiManager.Sushi target_sushi;
+	[HideInInspector] public string target_sushi;
 
 	[HideInInspector] public GuestGoTowardsCounterState goTowardsCounterState;
 	[HideInInspector] public GuestGoTowardsTableState goTowardsTableState;
@@ -42,7 +42,7 @@ public class Guest : MonoBehaviour {
 //	}
 
 	public virtual int getWaitTime() {
-		int waitTime = Guest.waitTime + gameManager.guestManager.humanPopularity / 15;
+		int waitTime = Guest.waitTime + PlayerDataManager.getPlayerData().humanPopularity / 15;
 		if (waitTime < gameManager.guestManager.minimalWaitTime) {
 			return gameManager.guestManager.minimalWaitTime;
 		} else {
@@ -83,16 +83,10 @@ public class Guest : MonoBehaviour {
 		return defActPopThDown;
 	}
 
-	public virtual SushiManager.Sushi[] getSushiWanted() {
-		SushiManager.Sushi[] sushiWanted = new SushiManager.Sushi[6];
-
-		sushiWanted[0] = SushiManager.Sushi.CaliforniaRoll;
-		sushiWanted[1] = SushiManager.Sushi.SalmonNigiri;
-		sushiWanted[2] = SushiManager.Sushi.SalmonRoll;
-		sushiWanted[3] = SushiManager.Sushi.TamagoNigiri;
-		sushiWanted[4] = SushiManager.Sushi.TunaNigiri;
-		sushiWanted[5] = SushiManager.Sushi.WhiteTunaNigiri;
-
+	public virtual string[] getSushiWanted() {
+		string[] sushiWanted = new string[PlayerDataManager.unlockedSushiType.Count];
+		PlayerDataManager.unlockedSushiType.CopyTo (sushiWanted);
+			
 		return sushiWanted;
 	}
 
@@ -101,8 +95,8 @@ public class Guest : MonoBehaviour {
 		bubble.show ();
 	}
 
-	public void showSushiIcon (SushiManager.Sushi sushi) {
-		icon.setIcon (gameManager.sushiManager.sushiSprite[SushiManager.sushi2number(sushi)]);
+	public void showSushiIcon (string sushi) {
+		icon.setIcon (Resources.Load(SushiManager.sushiTypes[sushi].getSpritePath_s(), typeof(Sprite)) as Sprite);
 		bubble.show ();
 	}
 
@@ -111,9 +105,9 @@ public class Guest : MonoBehaviour {
 		bubble.hide ();
 	}
 
-	public SushiManager.Sushi generateOrder() {
+	public string generateOrder() {
 		
-		SushiManager.Sushi[] sushiWanted = getSushiWanted ();
+		string[] sushiWanted = getSushiWanted ();
 
 		int index = Random.Range (0, sushiWanted.Length);
 
@@ -133,7 +127,7 @@ public class Guest : MonoBehaviour {
 	void Update() {
 		// Check Death
 		if (hpSub.HP <= 0) {
-			gameManager.playHurtSFX ();
+			gameManager.playSFX (GameManager.hurtSFX);
 			GameObject.Destroy (gameObject);
 		}
 
@@ -144,9 +138,9 @@ public class Guest : MonoBehaviour {
 		if (other.tag == "Weapon") {
 			GameObject.Destroy(other.gameObject);
 			showMoodIcon (1);
-			gameManager.guestManager.humanPopularity -= getPopValueDec ();
+			PlayerDataManager.getPlayerData().humanPopularity -= getPopValueDec ();
 			currState.ToLeaving ();
-			gameManager.playHurtSFX ();
+			gameManager.playSFX (GameManager.hurtSFX);
 		}
 		currState.OnTriggerEnter2D (other);
 	}

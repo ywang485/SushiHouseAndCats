@@ -3,10 +3,11 @@ using System.Collections;
 
 public class Weapon : Item {
 
-	public int basicDamage;
+	public GameObject target;
+
 
 	// Use this for initialization
-	void Start () {
+	protected void Start () {
 		Destroy(gameObject,1.0f);
 	}
 	

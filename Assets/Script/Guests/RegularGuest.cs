@@ -5,7 +5,7 @@ using System.Collections;
 public class RegularGuest : Guest {
 
 	public int time2spawn;
-	public SushiManager.Sushi[] sushi2order;
+	public string[] sushi2order;
 
 //	public override bool shouldSpawn(int totalMinute) {
 //		if (gameManager == null) {
@@ -18,7 +18,7 @@ public class RegularGuest : Guest {
 //		}
 //	}
 
-	public override SushiManager.Sushi[] getSushiWanted() {
+	public override string[] getSushiWanted() {
 		return sushi2order;
 	}
 

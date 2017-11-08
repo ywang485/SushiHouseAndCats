@@ -14,7 +14,7 @@ public class Item : MonoBehaviour {
 
 	void Awake() {
 		gameManager = GameManager.getGameManager ();
-		speed = gameManager.weaponSpeed;
+		speed = PlayerDataManager.getPlayerData().weaponSpeed;
 	}
 
 	// Use this for initialization
@@ -22,7 +22,7 @@ public class Item : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	protected void Update () {
+	protected virtual void Update () {
 		Vector2 currPos = new Vector2 (transform.position.x, transform.position.y);
 		transform.position = Vector2.MoveTowards(currPos, targetLoc, speed * Time.deltaTime);
 	}

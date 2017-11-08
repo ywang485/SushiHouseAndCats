@@ -38,8 +38,8 @@ public class CatEatingState : CatState {
 			HPSubject sub = obj.GetComponent<HPSubject> ();
 			Debug.Log ("sub: " + sub);
 			if (sub == null) {
-				GameManager.getGameManager ().catManager.increaseCatPopularity (catPopInc);
-				if (PlayerDataManager.playerData.catMoodIconEnabled) {
+				GameManager.getGameManager ().catManager.increaseCatPopularity (catPopInc, cat.catTypeId, 1);
+				if (PlayerDataManager.getPlayerData().catMoodIconEnabled) {
 					cat.showMoodIcon (2);
 				}
 				cat.towardsFood = false;
@@ -55,8 +55,8 @@ public class CatEatingState : CatState {
 			sub.beAttacked (cat.getEatingPower ());
 
 			if (sub.HP <= 0) {
-				GameManager.getGameManager ().catManager.increaseCatPopularity (catPopInc);
-				if (PlayerDataManager.playerData.catMoodIconEnabled) {
+				GameManager.getGameManager ().messagingCenter.eventHappened (new CatFedEvent (cat.catTypeId, catPopInc));
+				if (PlayerDataManager.getPlayerData().catMoodIconEnabled) {
 					cat.showMoodIcon (2);
 				}
 				cat.towardsFood = false;

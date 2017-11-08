@@ -1,38 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class IngredientManager : MonoBehaviour {
 
-	public enum Ingredient{
-		Rice,
-		Tuna,
-		Egg,
-		Salmon,
-		WhiteTuna,
-		Cucumber,
-		Avocado
-	};
+	static public readonly int ingredientBuyingUnit = 10;
+	static public readonly Dictionary<string, Ingredient> ingredients = new Dictionary<string, Ingredient>() {
+		{"rice", new Ingredient("rice", 10, "Rice", "Sprites/Ingredients/rice_s", "Sprites/Ingredients/rice_b")},
+		{"tuna", new Ingredient("tuna", 50, "Tuna", "Sprites/Ingredients/tuna_s","Sprites/Ingredients/tuna_b")},
+		{"egg", new Ingredient("egg", 30, "Egg", "Sprites/Ingredients/egg_s", "Sprites/Ingredients/egg_b")},
+		{"salmon", new Ingredient("salmon", 70, "Salmon", "Sprites/Ingredients/salmon_s", "Sprites/Ingredients/salmon_b")},
+		{"white-tuna", new Ingredient("white-tuna", 50, "White Tuna", "Sprites/Ingredients/whiteTuna_s", "Sprites/Ingredients/whiteTuna_b")},
+		{"cucumber", new Ingredient("cucumber", 5, "Cucumber", "Sprites/Ingredients/cucumber_s", "Sprites/Ingredients/cucumber_b")},
+		{"avocado", new Ingredient("avocado", 30, "Avocado", "Sprites/Ingredients/avocado_s", "Sprites/Ingredients/avocado_b")},
+		{"duck-meat", new Ingredient("duck-meat", 40, "Duck Meat", "Sprites/Ingredients/avocado_s", "Sprites/Ingredients/duckMeat_b")}
+		};
 
 	private GameManager gameManager;
 
-	// Number of Ingredients
-	public int numRice;
-	public int numTuna;
-	public int numEgg;
-	public int numSalmon;
-	public int numWhiteFish;
-	public int numCucumber;
-	public int numAvocado;
-
 	// Number of Ingredient Indicator
-	public Text numRiceIndicator;
-	public Text numTunaIndicator;
-	public Text numEggIndicator;
-	public Text numSalmonIndicator;
-	public Text numWhiteFishIndicator;
-	public Text numCucumberIndicator;
-	public Text numAvocadoIndicator;
+	public Text ingredientAmountIndicator;
 
 	// Ingredient Existence Indicator
 	public GameObject tunaIndicator;
@@ -43,181 +31,37 @@ public class IngredientManager : MonoBehaviour {
 	public GameObject avocadoIndicator;
 	public GameObject riceIndicator;
 
-	// Ingredient Buying Unit
-	static public int riceBuyingUnit = 10;
-	static public int tunaBuyingUnit = 10;
-	static public int eggBuyingUnit = 10;
-	static public int salmonBuyingUnit = 10;
-	static public int whiteFishBuyingUnit = 10;
-	static public int cucumberBuyingUnit = 10;
-	static public int avocadoBuyingUnit = 10;
-
-	// Ingredient Price
-	static public int ricePrice = 10;
-	static public int tunaPrice = 50;
-	static public int salmonPrice = 70;
-	static public int eggPrice = 30;
-	static public int whiteFishPrice = 50;
-	static public int cucumberPrice = 5;
-	static public int avocadoPrice = 30;
-
-	public bool consumeRice(int howmuch) {
-		if (numRice >= howmuch) {
-			numRice = numRice - howmuch;
-			updateIndicators ();
-			return true;
-		}
-		return false;
+	public void consumeIngredient(string ingredient, int howmuch) {
+		PlayerDataManager.getPlayerData().ingredients [ingredient] -= howmuch;
+		updateIndicators ();
 	}
 
-	public bool buyRice() {
-		if (gameManager.numGold >= ricePrice) {
-			gameManager.decreaseNumGold(ricePrice);
-			this.numRice += riceBuyingUnit;
+	public bool buyIngredient(string ingredient) {
+		Ingredient target = IngredientManager.ingredients [ingredient];
+		if (PlayerDataManager.getPlayerData().numGold >= target.getPrice()) {
+			gameManager.decreaseNumGold(target.getPrice());
+			PlayerDataManager.getPlayerData().ingredients[ingredient] += ingredientBuyingUnit;
 			updateIndicators ();
-			gameManager.playBlipSFX (true);
+			gameManager.playSFX (GameManager.posBlipSFX);
 			return true;
 		}
 		else {
-			gameManager.playBlipSFX (false);
+			gameManager.playSFX (GameManager.negBlipSFX);
 			return false;
 		}
 	}
-
-	public bool consumeTuna(int howmuch) {
-		if (numTuna >= howmuch) {
-			numTuna = numTuna - howmuch;
-			updateIndicators ();
-			return true;
-		}
-		return false;
-	}
-
-	public bool buyTuna() {
-		if (gameManager.numGold >= tunaPrice) {
-			gameManager.decreaseNumGold(tunaPrice);
-			this.numTuna += tunaBuyingUnit;
-			updateIndicators ();
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	public bool consumeEgg(int howmuch) {
-		if (numEgg >= howmuch) {
-			numEgg = numEgg - howmuch;
-			updateIndicators ();
-			return true;
-		}
-		return false;
-	}
-
-	public bool buyEgg() {
-		if (gameManager.numGold >= eggPrice) {
-			gameManager.decreaseNumGold(eggPrice);
-			this.numEgg += eggBuyingUnit;
-			updateIndicators ();
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	public bool consumeSalmon(int howmuch) {
-		if (numSalmon >= howmuch) {
-			numSalmon = numSalmon - howmuch;
-			updateIndicators ();
-			return true;
-		}
-		return false;
-	}
-
-	public bool buySalmon() {
-		if (gameManager.numGold >= salmonPrice) {
-			gameManager.decreaseNumGold(salmonPrice);
-			this.numSalmon += salmonBuyingUnit;
-			updateIndicators ();
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	public bool consumeWhiteFish(int howmuch) {
-		if (numWhiteFish >= howmuch) {
-			numWhiteFish = numWhiteFish - howmuch;
-			updateIndicators ();
-			return true;
-		}
-		return false;
-	}
-
-	public bool buyWhiteFish() {
-		if (gameManager.numGold >= whiteFishPrice) {
-			gameManager.decreaseNumGold(whiteFishPrice);
-			this.numWhiteFish += whiteFishBuyingUnit;
-			updateIndicators ();
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	public bool consumeCucumber(int howmuch) {
-		if (numCucumber >= howmuch) {
-			numCucumber = numCucumber - howmuch;
-			updateIndicators ();
-			return true;
-		}
-		return false;
-	}
-
-	public bool buyCucumber() {
-		if (gameManager.numGold >= cucumberPrice) {
-			gameManager.decreaseNumGold(cucumberPrice);
-			this.numCucumber += cucumberBuyingUnit;
-			updateIndicators ();
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	public bool consumeAvocado(int howmuch) {
-		if (numAvocado >= howmuch) {
-			numAvocado = numAvocado - howmuch;
-			updateIndicators ();
-			return true;
-		}
-		return false;
-	}
-
-	public bool buyAvocado() {
-		if (gameManager.numGold >= avocadoPrice) {
-			gameManager.decreaseNumGold(avocadoPrice);
-			this.numAvocado += avocadoBuyingUnit;
-			updateIndicators ();
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
+		
 	void updateNumIngredient() {
-		numRiceIndicator.text = numRice.ToString();
-		numTunaIndicator.text = numTuna.ToString();
-		numEggIndicator.text = numEgg.ToString();
-		numSalmonIndicator.text = numSalmon.ToString();
-		numWhiteFishIndicator.text = numWhiteFish.ToString();
-		numCucumberIndicator.text = numCucumber.ToString();
-		numAvocadoIndicator.text = numAvocado.ToString();
+		string content = "";
+		foreach (string iid in PlayerDataManager.getPlayerData().ingredients.Keys){
+			content  +=  (iid + ": " + PlayerDataManager.getPlayerData().ingredients[iid] + "\n");
+			
+		}
+		// For testing
+		content += ("Sushi Sold: " +  PlayerDataManager.getPlayerData().sushiSold + "\n");
+		// end testing
+
+		ingredientAmountIndicator.text = content;
 	}
 
 	static void turnOnIndicator(GameObject indicator) {
@@ -237,48 +81,49 @@ public class IngredientManager : MonoBehaviour {
 	}	
 
 	void updateIndicators() {
-
-		if (numRice <= 0) {
+		
+		if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey("rice") || PlayerDataManager.getPlayerData().ingredients["rice"] <= 0) {
 			IngredientManager.turnOffIndicator (riceIndicator);
 		} else {
 			IngredientManager.turnOnIndicator (riceIndicator);
 		}
-
-		if (numTuna <= 0) {
+			
+		if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey("tuna") ||PlayerDataManager.getPlayerData().ingredients["tuna"] <= 0) {
 			IngredientManager.turnOffIndicator (tunaIndicator);
 		} else {
 			IngredientManager.turnOnIndicator (tunaIndicator);
 		}
 
-		if (numEgg <= 0) {
+		if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey("egg") || PlayerDataManager.getPlayerData().ingredients["egg"] <= 0) {
 			IngredientManager.turnOffIndicator (eggIndicator);
 		} else {
 			IngredientManager.turnOnIndicator (eggIndicator);
 		}
 
-		if (numSalmon <= 0) {
+		if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey("salmon") || PlayerDataManager.getPlayerData().ingredients["salmon"] <= 0) {
 			IngredientManager.turnOffIndicator (salmonIndicator);
 		} else {
 			IngredientManager.turnOnIndicator (salmonIndicator);
 		}
 
-		if (numWhiteFish <= 0) {
+		if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey("white-tuna") || PlayerDataManager.getPlayerData().ingredients["white-tuna"] <= 0) {
 			IngredientManager.turnOffIndicator (whiteFishIndicator);
 		} else {
 			IngredientManager.turnOnIndicator (whiteFishIndicator);
 		}
 
-		if (numCucumber <= 0) {
+		if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey("cucumber") || PlayerDataManager.getPlayerData().ingredients["cucumber"] <= 0) {
 			IngredientManager.turnOffIndicator (cucumberIndicator);
 		} else {
 			IngredientManager.turnOnIndicator (cucumberIndicator);
 		}
 
-		if (numAvocado <= 0) {
+		if (!PlayerDataManager.getPlayerData().ingredients.ContainsKey("avocado") || PlayerDataManager.getPlayerData().ingredients["avocado"] <= 0) {
 			IngredientManager.turnOffIndicator (avocadoIndicator);
 		} else {
 			IngredientManager.turnOnIndicator (avocadoIndicator);
 		}
+
 
 	}
 

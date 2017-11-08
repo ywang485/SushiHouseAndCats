@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class GalGameMode : MonoBehaviour {
 
-	public SushiManager.Sushi sushiWanted;
+	public string sushiWanted;
 	public int statusCode;
 
 	public bool named;
@@ -45,31 +45,15 @@ public class GalGameMode : MonoBehaviour {
 			text.text = "Cat looks happy.";
 		}
 
-		GameManager.getGameManager ().catManager.increaseCatPopularity (3);
+		GameManager.getGameManager ().catManager.increaseCatPopularity (3, "", 0);
 	}
 
 	public void ask() {
 
-		string sushiName = "delicious sushi";
-
-		if (sushiWanted == SushiManager.Sushi.CaliforniaRoll) {
-			sushiName = "california roll";
-		} else if (sushiWanted == SushiManager.Sushi.SalmonNigiri) {
-			sushiName = "salmon nigiri";
-		} else if (sushiWanted == SushiManager.Sushi.SalmonRoll) {
-			sushiName = "salmon roll";
-		} else if (sushiWanted == SushiManager.Sushi.TamagoNigiri) {
-			sushiName = "tamago nigiri";
-		} else if (sushiWanted == SushiManager.Sushi.TunaNigiri) {
-			sushiName = "tuna nigiri";
-		} else if (sushiWanted == SushiManager.Sushi.WhiteTunaNigiri) {
-			sushiName = "white tuna nigiri";
-		}
-
 		if (named) {
-			text.text = "Steve wants " + sushiName + ".";
+			text.text = "Steve wants " + sushiWanted + ".";
 		} else {
-			text.text = "Steve wants " + sushiName + ".";
+			text.text = "Steve wants " + sushiWanted + ".";
 		}
 		
 	}

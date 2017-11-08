@@ -4,20 +4,20 @@ using System.Collections;
 public class Sushi : MonoBehaviour {
 
 	private HPSubject hp;
-	private SushiManager.Sushi sushiType;
+	private string sushiType;
 
 	private GameManager gameManager;
 
 	public GameObject discardBtn;
 
-	public SushiManager.Sushi getSushiType() {
+	public string getSushiType() {
 		return sushiType;
 	}
 
-	public void setSushiType(SushiManager.Sushi type) {
+	public void setSushiType(string type) {
 		sushiType = type;
 		SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
-		spriteRenderer.sprite = gameManager.sushiManager.sushiSprite [SushiManager.sushi2number(sushiType)];
+		spriteRenderer.sprite = Resources.Load(SushiManager.sushiTypes[type].getSpritePath_s(), typeof(Sprite)) as Sprite;
 	}
 
 	// Use this for initialization
@@ -39,7 +39,7 @@ public class Sushi : MonoBehaviour {
 
 	void OnEnable() {
 		hp.resetHP ();
-		GameObject hpBar = transform.FindChild ("HPBar").gameObject;
+		GameObject hpBar = transform.Find ("HPBar").gameObject;
 		hpBar.SetActive (false);
 		if (discardBtn != null) {
 			discardBtn.SetActive (false);

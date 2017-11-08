@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class GuestManager : MonoBehaviour {
 
 	public int spawningInterval = 2;
-	public int humanPopularity;
 	private GameManager gameManager;
 
 	public int minimalWaitTime = 15;
@@ -15,7 +14,7 @@ public class GuestManager : MonoBehaviour {
 	private int prevTime = 0;
 
 	int getSpawningLikelihood() {
-		int l = 5 + (int)((float)humanPopularity / 3.0f - 2.0f * (float)gameManager.getNumFood() - 2.0f * (float)gameManager.getNumCat());
+		int l = 5 + (int)((float)PlayerDataManager.getPlayerData().humanPopularity / 3.0f - 2.0f * (float)gameManager.getNumFood() - 2.0f * (float)gameManager.getNumCat());
 		if (l < 4) {
 			l = 4;
 		}
@@ -26,27 +25,30 @@ public class GuestManager : MonoBehaviour {
 		return l;
 	}
 
+	public void spawnOneGuest(int r) {
+		Debug.Log ("SpawnOneGuest called");
+		// Construct active guest list
+		List<GameObject> actGuestList = new List<GameObject>();
+		foreach (GameObject obj in guestList) {
+			Guest guest = obj.GetComponent<Guest> ();
+			if (PlayerDataManager.getPlayerData().humanPopularity <= guest.getActPopThUp() && PlayerDataManager.getPlayerData().humanPopularity >= guest.getActPopThDown()) {
+				actGuestList.Add (obj);
+			}
+		}
+		if (r <= getSpawningLikelihood()) {
+			int r2 = Random.Range (0, actGuestList.Count);
+			GameObject guestsNode = GameObject.Find ("Guests");
+			GameObject guestObj = (GameObject)GameObject.Instantiate (actGuestList[r2], gameManager.mapManager.getDoorLocation (), Quaternion.identity);
+			guestObj.transform.SetParent (guestsNode.transform);
+		}
+	}
+
 	void spawning(int totalMinute) {
 
 		if (totalMinute % spawningInterval == 0) {
 			if (prevTime != totalMinute) {
-				// Construct active guest list
-				List<GameObject> actGuestList = new List<GameObject>();
-				foreach (GameObject obj in guestList) {
-					Guest guest = obj.GetComponent<Guest> ();
-					if (humanPopularity <= guest.getActPopThUp() && humanPopularity >= guest.getActPopThDown()) {
-						actGuestList.Add (obj);
-					}
-				}
-				//Debug.Log ("Guest Spawning Function Entered");
+				spawnOneGuest (Random.Range (0, 100));
 				prevTime = totalMinute;
-				int r = Random.Range (0, 100);
-				if (r <= getSpawningLikelihood()) {
-					int r2 = Random.Range (0, actGuestList.Count);
-					GameObject guestsNode = GameObject.Find ("Guests");
-					GameObject guestObj = (GameObject)GameObject.Instantiate (actGuestList[r2], gameManager.mapManager.getDoorLocation (), Quaternion.identity);
-					guestObj.transform.SetParent (guestsNode.transform);
-				}
 			}
 		}
 
@@ -72,24 +74,24 @@ public class GuestManager : MonoBehaviour {
 	}
 
 	int calculateActualSpawnLikelihood(int basicSpawnLikelihood) {
-		if (humanPopularity >= 0) {
-			return basicSpawnLikelihood * (humanPopularity + 10) / 100;
+		if (PlayerDataManager.getPlayerData().humanPopularity >= 0) {
+			return basicSpawnLikelihood * (PlayerDataManager.getPlayerData().humanPopularity + 10) / 100;
 		} else {
 			return basicSpawnLikelihood;
 		}
 	}
 
 	public void increaseHumanPopularity(int howmuch) {
-		humanPopularity += howmuch;
-		if (humanPopularity > GameManager.maxPopularity) {
-			humanPopularity = GameManager.maxPopularity;
+		PlayerDataManager.getPlayerData().humanPopularity += howmuch;
+		if (PlayerDataManager.getPlayerData().humanPopularity > GameManager.maxPopularity) {
+			PlayerDataManager.getPlayerData().humanPopularity = GameManager.maxPopularity;
 		}
 	}
 
 	public void decreaseHumanPopularity(int howmuch) {
-		humanPopularity -= howmuch;
-		if (humanPopularity < 0) {
-			humanPopularity = 0;
+		PlayerDataManager.getPlayerData().humanPopularity -= howmuch;
+		if (PlayerDataManager.getPlayerData().humanPopularity < 0) {
+			PlayerDataManager.getPlayerData().humanPopularity = 0;
 		}
 	}
 
@@ -101,7 +103,9 @@ public class GuestManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		spawning(gameManager.getCurrTimeInMinute());
+		if (PlayerDataManager.getPlayerData ().guestSpawning) {
+			spawning (gameManager.getCurrTimeInMinute ());
+		}
 
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SelectSushi : GenericButton {
 
-	public SushiManager.Sushi sushi;
+	public string sushi;
 	private GameManager gameManager;
 
 	// Use this for initialization

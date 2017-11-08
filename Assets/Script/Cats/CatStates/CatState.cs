@@ -14,7 +14,7 @@ public class CatState {
 
 	public virtual void OnLeftClick() {
 //		if (cat.hpsubj == null) {
-//			if (PlayerDataManager.playerData.catMoodIconEnabled) {
+//			if (PlayerDataManager.getPlayerData().catMoodIconEnabled) {
 //				cat.showMoodIcon (3);
 //			}
 //			ToEscaping ();
@@ -24,10 +24,10 @@ public class CatState {
 	}
 
 	public virtual void OnRightClick() {
-		if (PlayerDataManager.playerData.galGameModeEnabled) {
+		if (PlayerDataManager.getPlayerData().galGameModeEnabled) {
 			cat.gameManager.enterGalGameMode (cat.getStatusCode(), cat.getSushiWanted()[0]);
 		}
-		else if (PlayerDataManager.playerData.catPettingEnabled) {
+		else if (PlayerDataManager.getPlayerData().catPettingEnabled) {
 			cat.pet ();
 		}
 	}
@@ -54,9 +54,13 @@ public class CatState {
 	}
 
 	public virtual void ToLeaving() {
-			GameManager.getGameManager ().catManager.increaseCatPopularity (1);
+		GameManager.getGameManager ().catManager.increaseCatPopularity (1, cat.catTypeId, 1);
 			cat.targetPosition = GameManager.getGameManager ().mapManager.getDoorLocation ();
 			cat.currState = cat.leavingState;
+	}
+
+	public virtual void ToAvoiding() {
+		cat.currState = cat.avoidingState;
 	}
 
 	public virtual void ToPlay() {
@@ -68,12 +72,16 @@ public class CatState {
 		if (cat.currState != cat.escapingState) {
 			cat.towardsFood = false;
 			cat.targetPosition = GameManager.getGameManager ().mapManager.getDoorLocation ();
-			GameManager.getGameManager ().catManager.decreaseCatPopularity (2);
+			GameManager.getGameManager ().catManager.decreaseCatPopularity (2, cat.catTypeId, 1);
 			cat.hideBubble ();
 			cat.currState = cat.escapingState;
-			cat.gameManager.playMeowSFX (false);
 		}
 
+	}
+
+	public virtual void ToAttacking() {
+		Debug.Log ("Attacking Mode Entered!");
+		cat.currState = cat.attackingState;
 	}
 
 }

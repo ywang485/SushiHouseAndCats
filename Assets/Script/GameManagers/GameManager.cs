@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -10,22 +10,12 @@ public class GameManager : MonoBehaviour {
 	// Static Parameters
 	static public readonly int rent = 10;
 
-	// Day Count
-	static public int dayCount = 1;
-
 	// Daily Profit Count
 	static public int netProfit = 0;
 	private int initNumGold;
 
-	// Gameplay data
-	public int numGold;
-	public int basicAttack = 3;
-	public int basicCatPettingPower = 1;
-	public int itemCatPettingPower = 0;
-	public float weaponSpeed = 15f;
-	public float movingSpeed = 0;
-
 	public MapManager mapManager;
+	[HideInInspector] public GameMessagingCenter messagingCenter;
 
 	[HideInInspector] public SushiManager sushiManager;
 	[HideInInspector] public IngredientManager ingredientManager;
@@ -38,6 +28,7 @@ public class GameManager : MonoBehaviour {
 	public const int maxPopularity = 100;
 
 	// In-Game Time Control
+	public float gameStartTime;
 	private int hour;
 	private int minute = 1;
 
@@ -46,7 +37,7 @@ public class GameManager : MonoBehaviour {
 	float lastChange;
 	public static bool clockPaused = false;
 
-	public int openTime = 9;
+	public int openTime = 11;
 	public int closeTime = 21;
 
 	//public GameObject sushiIndicator;
@@ -58,12 +49,15 @@ public class GameManager : MonoBehaviour {
 	public GameObject catGalGameModePanel;
 
 	// Audio Clips
-	public AudioClip posBlipSFX;
-	public AudioClip negBlipSFX;
-	public AudioClip coinSFX;
-	public AudioClip hurtSFX;
-	public AudioClip grumpyMeowSFX;
-	public AudioClip happyMeowSFX;
+	public static readonly string posBlipSFX = "SFX/posBlip";
+	public static readonly string negBlipSFX = "SFX/negBlip";
+	public static readonly string coinSFX = "SFX/coin";
+	public static readonly string hurtSFX = "SFX/hurt";
+	public static readonly string grumpyMeowSFX = "SFX/grumpyMeow";
+	public static readonly string happyMeowSFX = "SFX/happyMeow";
+
+	// UI
+	public static readonly string storeUI = "Prefabs/UI/WeaponStoreUI";
 
 	// Temp
 	public GameObject ending1;
@@ -82,20 +76,12 @@ public class GameManager : MonoBehaviour {
 
 	private AudioSource audioSrc;
 
-	public void playBlipSFX(bool positive) {
-		if(positive) {
-			audioSrc.PlayOneShot(posBlipSFX, 1f);
-		} else {
-			audioSrc.PlayOneShot(negBlipSFX, 1f);
-		}
-	}
+	// Room items
+	public GameObject treadmill;
+	public GameObject dartboard;
 
-	public void playCoinSFX() {
-		audioSrc.PlayOneShot(coinSFX, 1f);
-	}
-
-	public void playHurtSFX() {
-		audioSrc.PlayOneShot(hurtSFX, 1f);
+	public void playSFX(string SFXPath) {
+		audioSrc.PlayOneShot(Resources.Load(SFXPath, typeof(AudioClip)) as AudioClip, 1f);
 	}
 
 	public int getSushiPlateCount() {
@@ -106,14 +92,6 @@ public class GameManager : MonoBehaviour {
 		return GameObject.FindGameObjectsWithTag ("Guest").Length;
 	}
 
-	public void playMeowSFX(bool happy) {
-		if (happy) {
-			audioSrc.PlayOneShot (happyMeowSFX, 1f);
-		} else {
-			audioSrc.PlayOneShot (grumpyMeowSFX, 1f);
-		}
-	}
-
 	public static GameManager getGameManager() {
 		return FindObjectOfType(typeof (GameManager)) as GameManager;
 	}
@@ -121,8 +99,10 @@ public class GameManager : MonoBehaviour {
 	// initialization
 	void Awake () {
 
-		audioSrc = GetComponent<AudioSource> ();
+		gameStartTime = Time.time;
 
+		audioSrc = GetComponent<AudioSource> ();
+		messagingCenter = GetComponent<GameMessagingCenter> ();
 		sushiManager = gameObject.GetComponentInChildren<SushiManager> ();
 		ingredientManager = gameObject.GetComponentInChildren<IngredientManager> ();
 		catManager = gameObject.GetComponentInChildren<CatManager> ();
@@ -130,46 +110,12 @@ public class GameManager : MonoBehaviour {
 		levelManager = gameObject.GetComponentInChildren<LevelManager> ();
 		weaponManager = gameObject.GetComponentInChildren<WeaponManager> ();
 
-		GameObject playerDataManagerObj = GameObject.Find ("PlayerDataManager");
-
 		lastChange = Time.time;
 		hour = openTime;
 
-		initNumGold = numGold;
+		initNumGold = PlayerDataManager.getPlayerData().numGold;
 
-		// Load Game
-		if (playerDataManagerObj != null) {
-			playerDataManager = playerDataManagerObj.GetComponent<PlayerDataManager>();
-			if (playerDataManager.isLoadedGame) {
-				Debug.Log ("Loading Saved Game");
-				PlayerData data = PlayerDataManager.playerData;
-				catManager.catPopularity = data.catPopularity;
-				guestManager.humanPopularity = data.humanPopularity;
-				numGold = data.numGold;
-				dayCount = data.dayCount;
-				playerDataManager.isLoadedGame = false;
-				endTodayAndStartNewDay ();
-
-				// Load number of each ingredient
-				ingredientManager.numRice = data.numRice;
-				ingredientManager.numSalmon = data.numSalmon;
-				ingredientManager.numAvocado = data.numAvocado;
-				ingredientManager.numCucumber = data.numCucumber;
-				ingredientManager.numEgg = data.numEgg;
-				ingredientManager.numTuna = data.numTuna;
-				ingredientManager.numWhiteFish = data.numWhiteFish;
-
-				basicAttack = data.basicAttack;
-				weaponSpeed = data.weaponSpeed;
-
-				basicCatPettingPower = data.basicCatPettingPower;
-				itemCatPettingPower = data.itemCatPettingPower;
-
-				movingSpeed = data.movingSpeed;
-
-				weaponManager.weaponStatus = (bool[]) data.weaponStatus.Clone();
-			}
-		}
+		updateRoomItems ();
 	}
 
 	public int getNumFood() {
@@ -181,81 +127,42 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public int calculateDamage(int defense) {
-		return basicAttack + weaponManager.weaponList[weaponManager.currWeaponIdx].GetComponent<Weapon>().basicDamage - defense;
+		return PlayerDataManager.getPlayerData().basicAttack + weaponManager.getWeaponDamage() - defense;
 	}
 
 	public int calculatePettingPower() {
-		return basicCatPettingPower + itemCatPettingPower;
+		return PlayerDataManager.getPlayerData().basicAffinity + PlayerDataManager.getPlayerData().itemAffinity;
 	}
 
-	public void buyIngredient(int ingredientNo) {
-
-		IngredientManager.Ingredient ingredient;
-
-		if (ingredientNo == 1) {
-			ingredient = IngredientManager.Ingredient.Tuna;
-		} else if (ingredientNo == 2) {
-			ingredient = IngredientManager.Ingredient.Salmon;
-		} else if (ingredientNo == 3) {
-			ingredient = IngredientManager.Ingredient.WhiteTuna;
-		} else if (ingredientNo == 4) {
-			ingredient = IngredientManager.Ingredient.Egg;
-		} else if (ingredientNo == 5) {
-			ingredient = IngredientManager.Ingredient.Cucumber;
-		} else if (ingredientNo == 6) {
-			ingredient = IngredientManager.Ingredient.Avocado;
-		} else {
-			return;
-		}
+	public void buyIngredient(string ingredient) {
 
 		bool success = false;
 
-		if (ingredient == IngredientManager.Ingredient.Tuna) {
-			success = ingredientManager.buyTuna ();
-		} else if (ingredient == IngredientManager.Ingredient.Salmon) {
-			success = ingredientManager.buySalmon ();
-		} else if (ingredient == IngredientManager.Ingredient.WhiteTuna) {
-			success = ingredientManager.buyWhiteFish ();
-		} else if (ingredient == IngredientManager.Ingredient.Egg) {
-			success = ingredientManager.buyEgg ();
-		} else if (ingredient == IngredientManager.Ingredient.Cucumber) {
-			success = ingredientManager.buyCucumber ();
-		} else if (ingredient == IngredientManager.Ingredient.Avocado) {
-			success = ingredientManager.buyAvocado ();
-		}
+		success = ingredientManager.buyIngredient (ingredient);
 
 		if (!success) {
 			showBottomText ("Not Enough Gold");
-			playBlipSFX (false);
+			playSFX (negBlipSFX);
 		} else {
-			playBlipSFX (true);
+			playSFX (posBlipSFX);
 		}
 
+	}
+
+	public void updateRoomItems() {
+		if(PlayerDataManager.getPlayerData().inventory.ContainsKey ("treadmill")) {
+			treadmill.SetActive (true);
+		}
+		if(PlayerDataManager.getPlayerData().inventory.ContainsKey ("dartboard")) {
+			dartboard.SetActive (true);
+		}
 	}
 
 	public int getCurrTimeInMinute() {
 		return hour * 60 + minute;
 	}
 
-	public void makeSushi(int sushiNo) {
-
-		SushiManager.Sushi sushi;
-
-		if (sushiNo == 1) {
-			sushi = SushiManager.Sushi.TunaNigiri;
-		} else if (sushiNo == 2) {
-			sushi = SushiManager.Sushi.CaliforniaRoll;
-		} else if (sushiNo == 3) {
-			sushi = SushiManager.Sushi.SalmonNigiri;
-		} else if (sushiNo == 4) {
-			sushi = SushiManager.Sushi.WhiteTunaNigiri;
-		} else if (sushiNo == 5) {
-			sushi = SushiManager.Sushi.TamagoNigiri;
-		} else if (sushiNo == 6) {
-			sushi = SushiManager.Sushi.SalmonRoll;
-		} else {
-			return;
-		}
+	public void makeSushi(string sushi) {
 
 		int counter_loc = mapManager.findAvailableSushiLocOnCounter ();
 		//Debug.Log ("Available Sushi Loc on Counter Found: " + counter_loc);
@@ -266,27 +173,15 @@ public class GameManager : MonoBehaviour {
 
 		bool success = false;
 
-		if (sushi == SushiManager.Sushi.TunaNigiri) {
-			success = sushiManager.makeTunaNigiri (ingredientManager);
-		} else if (sushi == SushiManager.Sushi.SalmonNigiri) {
-			success = sushiManager.makeSalmonNigiri (ingredientManager);
-		} else if (sushi == SushiManager.Sushi.WhiteTunaNigiri) {
-			success = sushiManager.makeWhiteTunaNigiri (ingredientManager);
-		} else if (sushi == SushiManager.Sushi.TamagoNigiri) {
-			success = sushiManager.makeTamagoNigiri (ingredientManager);
-		} else if (sushi == SushiManager.Sushi.CaliforniaRoll) {
-			success = sushiManager.makeCaliforniaRoll (ingredientManager);
-		} else if (sushi == SushiManager.Sushi.SalmonRoll) {
-			success = sushiManager.makeSalmonRoll (ingredientManager);
-		}
+		success = sushiManager.makeSushiCheck (sushi);
 
 		if (!success) {
 			showBottomText ("Not Enough Ingredient");
-			playBlipSFX (false);
+			playSFX (negBlipSFX);
 		} else {
 			showBottomText ("Sushi Made");
 			mapManager.setSushiOnCounter (counter_loc, sushi);
-			playBlipSFX (true);
+			playSFX (posBlipSFX);
 		}
 	}
 
@@ -297,7 +192,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public void enterGalGameMode(int statusCode, SushiManager.Sushi sushiWanted) {
+	public void enterGalGameMode(int statusCode, string sushiWanted) {
 		GalGameMode galGameMode = catGalGameModePanel.GetComponent<GalGameMode> ();
 		galGameMode.statusCode = statusCode;
 		galGameMode.sushiWanted = sushiWanted;
@@ -332,7 +227,7 @@ public class GameManager : MonoBehaviour {
 
 	public void consumeSushi(int targetCounterSapce) {
 		if (targetCounterSapce >= 0) {
-			mapManager.setSushiOnCounter (targetCounterSapce, SushiManager.Sushi.NOTHING);
+			mapManager.setSushiOnCounter (targetCounterSapce, "NOTHING");
 		} 
 	}
 
@@ -350,44 +245,58 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+	public void buyItem(string itemName) {
+		InventoryItem item = ItemDatabase.getItem (itemName);
+		if (item == null) {
+			Debug.Log ("Item " + itemName + " does not exist!");
+			return;
+		}
+		if (PlayerDataManager.getPlayerData().numGold > item.getPrice ()) {
+			PlayerDataManager.getPlayerData().numGold -= item.getPrice ();
+			PlayerDataManager.getPlayerData().inventory.Add (itemName, true);
+			messagingCenter.eventHappened (new NewItemObtainedEvent(itemName));
+		}
+
+	}
+
 	public void increaseNumGold(int howmuch) {
-		numGold += howmuch;
+		PlayerDataManager.getPlayerData().numGold += howmuch;
 	}
 
 	public void decreaseNumGold(int howmuch) {
-		numGold -= howmuch;
+		PlayerDataManager.getPlayerData().numGold -= howmuch;
 	}
 
-	void pauseClock() {
+	public void pauseClock() {
 		Time.timeScale = 0;
 		clockPaused = true;
 		gamePausedIndicator.SetActive (true);
 	}
 
-	void unpauseClock() {
+	public void unpauseClock() {
 		Time.timeScale = 1.0f;
 		clockPaused = false;
 		gamePausedIndicator.SetActive (false);
+		updateRoomItems ();
 	}
 
 	void endTodayAndStartNewDay () {
-		Time.timeScale = 0;
-		clockPaused = true;
-		netProfit = numGold - initNumGold;
+		pauseClock ();
+		netProfit = PlayerDataManager.getPlayerData().numGold - initNumGold;
 		endOfDayDisplay.SetActive (true);
 		endOfDayMessage.text = "Good Job!\n" + 
 			"Today you've earned " + netProfit + "G.\n" +
 			rent + "G's rent has been charged";
 
 		// Check victory condition
-		if (catManager.catPopularity < -130) {
+		if (PlayerDataManager.getPlayerData().catPopularity < -130) {
 			ending1.SetActive (true);
 		}
-		if (catManager.catPopularity > 65) {
+		if (PlayerDataManager.getPlayerData().catPopularity > 65) {
 			ending2.SetActive (true);
 		}
 
-		GameObject saveButtonObj = endOfDayDisplay.gameObject.transform.FindChild ("SaveButton").gameObject;
+		GameObject saveButtonObj = endOfDayDisplay.gameObject.transform.Find ("SaveButton").gameObject;
 		Button saveButton = saveButtonObj.GetComponent<Button>();
 		Text saveText = saveButtonObj.GetComponentInChildren<Text> ();
 		saveText.text = "Save";
@@ -396,17 +305,17 @@ public class GameManager : MonoBehaviour {
 		hour = openTime;
 		minute = 1;
 
-		levelManager.setUpLevel (dayCount);
+		levelManager.setUpLevel (PlayerDataManager.getPlayerData().dayCount);
 
 		// Show weapon store if cat popularity is less than threshold
-		if (PlayerDataManager.playerData.weaponStoreEnabled) {
-			GameObject weaponStoreBtn = endOfDayDisplay.transform.FindChild ("WeaponStoreButton").gameObject;
+		if (PlayerDataManager.getPlayerData().weaponStoreEnabled) {
+			GameObject weaponStoreBtn = endOfDayDisplay.transform.Find ("WeaponStoreButton").gameObject;
 			weaponStoreBtn.SetActive (true);
 		}
 
 		// Show cat supply store if it is enabled
-		if (PlayerDataManager.playerData.catStoreEnabled) {
-			GameObject CatStoreBtn = endOfDayDisplay.transform.FindChild ("CatSupplyStoreButton").gameObject;
+		if (PlayerDataManager.getPlayerData().catStoreEnabled) {
+			GameObject CatStoreBtn = endOfDayDisplay.transform.Find ("CatSupplyStoreButton").gameObject;
 			CatStoreBtn.SetActive (true);
 		}
 
@@ -421,7 +330,7 @@ public class GameManager : MonoBehaviour {
 //		}
 			
 		for (int i = 0; i < mapManager.sushiOnCounterIndicators.Length; i ++) {
-			mapManager.setSushiOnCounter (i, SushiManager.Sushi.NOTHING);
+			mapManager.setSushiOnCounter (i, "NOTHING");
 		}
 
 
@@ -435,12 +344,11 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void startNewDay() {
-		clockPaused = false;
-		endOfDayDisplay.SetActive (false);
-		Time.timeScale = 1.0f;
+		unpauseClock ();
+		SceneManager.LoadScene ("EndOfDayMenu");
 
-		dayCount = dayCount + 1;
-
+		levelManager.unlockIngredient ();
+		levelManager.unlockSushiType ();
 	}
 
 
@@ -462,35 +370,11 @@ public class GameManager : MonoBehaviour {
 	public void saveGame() {
 		BinaryFormatter bf = new BinaryFormatter ();
 		FileStream file = File.Open (Application.persistentDataPath + "/playerInfo.dat", FileMode.OpenOrCreate);
-
-		PlayerData data = PlayerDataManager.playerData;
-		data.catPopularity = catManager.catPopularity;
-		data.humanPopularity = guestManager.humanPopularity;
-		data.numGold = numGold;
-		data.dayCount = dayCount;
-
-		data.numRice = ingredientManager.numRice;
-		data.numSalmon = ingredientManager.numSalmon;
-		data.numAvocado = ingredientManager.numAvocado;
-		data.numCucumber = ingredientManager.numCucumber;
-		data.numEgg = ingredientManager.numEgg;
-		data.numTuna = ingredientManager.numTuna;
-		data.numWhiteFish = ingredientManager.numWhiteFish;
-
-		data.basicAttack = basicAttack;
-
-		data.basicCatPettingPower = basicCatPettingPower;
-		data.itemCatPettingPower = itemCatPettingPower;
-		data.weaponSpeed = weaponSpeed;
-
-		data.movingSpeed = movingSpeed;
-
-		data.weaponStatus = (bool[]) weaponManager.weaponStatus.Clone();
-
+		PlayerData data = PlayerDataManager.getPlayerData();
 		bf.Serialize (file, data);
 		file.Close ();
 
-		GameObject saveButtonObj = endOfDayDisplay.gameObject.transform.FindChild ("SaveButton").gameObject;
+		GameObject saveButtonObj = endOfDayDisplay.gameObject.transform.Find ("SaveButton").gameObject;
 		Button saveButton = saveButtonObj.GetComponent<Button>();
 		Text saveText = saveButtonObj.GetComponentInChildren<Text> ();
 		saveText.text = "Saved";
@@ -509,31 +393,45 @@ public class GameManager : MonoBehaviour {
 		//	weaponAttack = 2;
 		//}
 
-		//PlayerDataManager.playerData.itemsOwned.Add (itemID);
+		//PlayerDataManager.getPlayerData().itemsOwned.Add (itemID);
 	}
 
 	public void buyCatSupply(string itemID) {
 		if (itemID.Equals ("ToyMouse")) {
-			itemCatPettingPower = 1;
+			PlayerDataManager.getPlayerData().itemAffinity = 1;
 		} else if (itemID.Equals ("ScratchingPost")) {
-			itemCatPettingPower = 3;
+			PlayerDataManager.getPlayerData().itemAffinity = 3;
 		} else if (itemID.Equals ("CatBell")) {
-			itemCatPettingPower = 2;
+			PlayerDataManager.getPlayerData().itemAffinity = 2;
 		}
 
-		//PlayerDataManager.playerData.itemsOwned.Add (itemID);
+		//PlayerDataManager.getPlayerData().itemsOwned.Add (itemID);
+	}
+
+	public void openStoreUI() {
+		instantiateUI (storeUI);
+	}
+
+	static public GameObject instantiateUI(string UIPrefabPath) {
+		GameObject canvasNode = GameObject.Find ("Canvas");
+		GameObject UIObj = (GameObject)GameObject.Instantiate (Resources.Load(UIPrefabPath, typeof(GameObject)) as GameObject, canvasNode.transform);
+		return UIObj;
 	}
 
 	// Update is called once per frame
 	void Update () {
 
-		gameplayDataIndicator.text = "Gold: " + numGold + "\n" +
-		"Human Popularity: " + guestManager.humanPopularity + "\n" +
-		"Cat Popularity: " + catManager.catPopularity;
+		int totalGameTime = Mathf.FloorToInt(Time.time - gameStartTime) / 60 + PlayerDataManager.getPlayerData().gameDuration;
+
+		gameplayDataIndicator.text = "Gold: " + PlayerDataManager.getPlayerData().numGold + "\n" +
+			"Human Popularity: " + PlayerDataManager.getPlayerData().humanPopularity + "\n" +
+			"Cat Popularity: " + PlayerDataManager.getPlayerData().catPopularity + "\n" +
+			"Cat Enemy Level: " + PlayerDataManager.getPlayerData().catEnemyLevel + "\n" +
+			"Cat Friend Level: " + PlayerDataManager.getPlayerData().catFriendLevel;
 
 		clockInidcator.text = hour.ToString("D2") + ":" + minute.ToString("D2");
 
-		dayIndicator.text = "Day " + dayCount;
+		dayIndicator.text = "Day " + PlayerDataManager.getPlayerData().dayCount;
 
 		if (Input.GetButtonDown ("Submit")) {
 			if (!clockPaused) {
@@ -554,12 +452,13 @@ public class GameManager : MonoBehaviour {
 				minute = 0;
 			}
 			if (hour >= closeTime) {
-				numGold -= rent;
+				hour = openTime;
+				PlayerDataManager.getPlayerData().numGold -= rent;
 				// Game Over Check
-				if (numGold <= 0) {
+				if (PlayerDataManager.getPlayerData().numGold <= 0) {
 					gameover ();
 				} else {
-					endTodayAndStartNewDay ();
+				//	endTodayAndStartNewDay ();
 				}
 			}
 		}
