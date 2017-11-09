@@ -20,3 +20,13 @@
 /Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/UnityEngine.Timeline.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/UnityEngine.UIAutomation.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/UnityEngine.GoogleAudioSpatializer.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/UnityEngine.SpatialTracking.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/UnityEngine.Purchasing.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/Unity.Cecil.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/ExCSS.Unity.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/Unity.Legacy.NRefactory.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/Unity.Cecil.Pdb.dll
+/Users/Noumenon/Documents/Ongoing/SushiHouseAndCat/Prototype1/Unity/SushiHouseAndCat/Temp/bin/Debug/Unity.Cecil.Mdb.dll
